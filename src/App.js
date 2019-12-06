@@ -1,25 +1,49 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { 
+  BrowserRouter as Router,
+  Switch,
+  Route
+ } from 'react-router-dom'
+import Navigator from './components/navigator/navigator';
+import {
+  Home
+} from './pages'
+
+const subpages = {
+  vehicle: {
+    ref: '/vehicle',
+    component: <div>Primary Vehicle</div>,
+    title: 'Primary Vehicle'
+  },
+  gnc: {
+    ref: '/gnctestbed',
+    component: <div>GNC</div>,
+    title: 'GNC Testbed'
+  },
+  contact: {
+    ref: '/contact',
+    component: <div>Contact us</div>,
+    title: 'Contact'
+  }
+
+}
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Navigator home={'/'} refs={subpages}/>
+      <Switch>
+        <Route exact path='/'>
+          { <Home></Home> } 
+        </Route>
+        {
+          Object.keys(subpages).map(key =>
+            <Route exact path={subpages[key].ref}>
+              { subpages[key].component }
+            </Route>)
+        }
+      </Switch>
+    </Router>
   );
 }
 

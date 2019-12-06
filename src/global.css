@@ -1,0 +1,31 @@
+body, html, div, section, span {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    font-family: "Open Sans";
+}
+
+h1 {
+    font-family: "Titillium Web", sans-serif;
+    font-style: italic;
+    font-size: 28px;
+}
+
+span, p {
+    font-family: "Open Sans", sans-serif;
+    font-size: 14px;
+}
+
+a {
+    font-size: 14px;
+    color: var(--purple);
+    cursor: pointer;
+    transition: color 100ms;
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--purple-hover);
+}
