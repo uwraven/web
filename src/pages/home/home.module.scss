@@ -1,4 +1,18 @@
 // ensure not outline is present when user is using orbit tools
 canvas {
     outline: none;
+    padding: 0;
+    margin: 0;
+}
+
+.home {
+    height: 100vh;
+}
+
+.threeContainer {
+    // height: calc(100vh - 60px);
+
+    width: 50vw;
+    height: calc(100% - 5px); // ff bug with full page rendering
+    background-color: lightyellow
 }
