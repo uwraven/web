@@ -1,12 +1,10 @@
+const metal = {
+    reflectivity: 0.5,
+    metalness: 1.0,
+    flatShading: false,
+};
+
 export default [
-    // {
-    //     src: 'Mounts',
-    //     origin: {
-    //         x: 0,
-    //         y: 0,
-    //         z: 0,
-    //     }
-    // },
     {
         src: 'Payload_Fairing_rev1',
         origin: {
@@ -14,30 +12,54 @@ export default [
             y: 100,
             z: 0,
         },
-        separation: 2.0,
-
+        materialProperties: metal,
         keyframes: [
             {
-                start: {
-                    index: 0,
-                    offset: {
-                        x: 0,
-                        y: 0,
-                        z: 0
-                    }
-                }, 
-                end: {
-                    index: 1,
-                    offset: {
-                        x: 0,
-                        y: 0,
-                        z: 0
-                    }
+                time: 0,
+                offset: {
+                    x: 0,
+                    y: 0,
+                    z: 0
                 }
-            }
+            },
+            {
+                time: 1,
+                offset: {
+                    x: 0,
+                    y: 25,
+                    z: 0
+                }
+            },
+        ],
+    },
+    {
+        src: 'Stage_1_Tank_rev1',
+        origin: {
+            x: 0,
+            y: 0,
+            z: 0,
+        },
+        materialProperties: metal,
+        keyframes: [
+            {
+                time: 0,
+                offset: {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                }
+            },
+            {
+                time: 2,
+                offset: {
+                    x: -30,
+                    y: 0,
+                    z: 0
+                }
+            },
         ]
     },
-    // {
+        // {
     //     src: 'Payload_Platform_Black',
     //     origin: {
     //         x: 0,
@@ -69,15 +91,6 @@ export default [
     //         z: 0
     //     }
     // },
-    {
-        src: 'Stage_1_Tank_rev1',
-        origin: {
-            x: 0,
-            y: 0,
-            z: 0,
-        },
-        separation: 0.2,
-    },
     // {
     //     src: 'Stage_1_Top_Ring_Grey',
     //     origin: {
