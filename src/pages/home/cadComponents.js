@@ -1,8 +1,23 @@
+
+const INTERPOLATIONS = {
+    "LINEAR": 0,
+    "SIN": 1,
+}
+
+const defaultOffset = {x: 0, y: 0, z: 0}
+const defaultRotation = {x: 0, y: 0, z: 0}
+
 const metal = {
     reflectivity: 0.5,
     metalness: 1.0,
     flatShading: false,
 };
+
+export {
+    INTERPOLATIONS,
+    defaultRotation,
+    defaultOffset
+}
 
 export default [
     {
@@ -12,6 +27,12 @@ export default [
             y: 100,
             z: 0,
         },
+        rotation: {
+            x: 0,
+            y: 0,
+            z: 0
+        },
+        easing: INTERPOLATIONS.LINEAR,
         materialProperties: metal,
         keyframes: [
             {
@@ -27,7 +48,25 @@ export default [
                 offset: {
                     x: 0,
                     y: 25,
-                    z: 0
+                    z: 0,
+                },
+                rotation: {
+                    x: 0,
+                    y: 0,
+                    z: Math.PI / 2,
+                }
+            },
+            {
+                time: 2,
+                offset: {
+                    x: 0,
+                    y: 50,
+                    z: 0,
+                },
+                rotation: {
+                    x: 0,
+                    y: 0,
+                    z: Math.PI
                 }
             },
         ],
@@ -35,6 +74,11 @@ export default [
     {
         src: 'Stage_1_Tank_rev1',
         origin: {
+            x: 0,
+            y: 0,
+            z: 0,
+        },
+        rotation: {
             x: 0,
             y: 0,
             z: 0,
@@ -50,21 +94,34 @@ export default [
                 }
             },
             {
-                time: 2,
+                time: 1,
                 offset: {
                     x: -30,
                     y: 0,
                     z: 0
                 }
             },
+            {
+                time: 5,
+                offset: {
+                    x: -30,
+                    y: 30,
+                    z: 100
+                }
+            },
         ]
     },
-        // {
+    //     {
     //     src: 'Payload_Platform_Black',
     //     origin: {
     //         x: 0,
     //         y: -100,
     //         z: 0,
+    //     },
+    //     rotation: {
+    //         x: 0,
+    //         y: 0,
+    //         z: 0
     //     }
     // },
     // {

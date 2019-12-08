@@ -4,7 +4,7 @@ import styles from './home.module.scss';
 import * as THREE from 'three';
 import {STLLoader} from 'three/examples/jsm/loaders/STLLoader';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
-import cadComponents from './cadComponents';
+import cadComponents, {INTERPOLATIONS, defaultOffset, defaultRotation} from './cadComponents';
 
 class Home extends Component {
 
@@ -102,7 +102,7 @@ class Home extends Component {
         cadComponents.map(obj => {
             let child = scope.scene.getObjectByName(obj.src);
             if (child) {
-                const INTERVAL = 500; // 500 px
+                const INTERVAL = 1000; // 500 px
                 let t = scope.y / INTERVAL;
 
                 // if between first and last frames, then perform interpolation between two bounding frames
@@ -117,6 +117,15 @@ class Home extends Component {
                     const endTime = Math.max(...timestamps);
                     const startTime = Math.min(...timestamps);
 
+                    function setProperties(offset, rotation) {
+                        child.position.x = obj.origin.x + offset.x;
+                        child.position.y = obj.origin.y + offset.y;
+                        child.position.z = obj.origin.z + offset.z;
+                        child.rotation.x = obj.rotation.x + rotation.x;
+                        child.rotation.y = obj.rotation.y + rotation.y;
+                        child.rotation.z = obj.rotation.z + rotation.z;
+                    }
+
                     // TODO:: Consolidate this logic
                     if (t >= endTime) {
                         // outside of keyframes, clamp to last frame 
@@ -129,11 +138,9 @@ class Home extends Component {
                                 lastFrameIndex = i;
                             }
                         })
-                        if (obj.keyframes[lastFrameIndex]) {
-                            child.position.x = obj.keyframes[lastFrameIndex].offset.x + obj.origin.x;
-                            child.position.y = obj.keyframes[lastFrameIndex].offset.y + obj.origin.y;
-                            child.position.z = obj.keyframes[lastFrameIndex].offset.z + obj.origin.z;
-                        }
+                        if (obj.keyframes[lastFrameIndex]) setProperties(
+                                obj.keyframes[lastFrameIndex].offset || defaultOffset,
+                                obj.keyframes[lastFrameIndex].rotation || defaultRotation)
                     } else if (t <= startTime) {
                         var firstFrameIndex = 0;
                         var firstFrameTime = 0;
@@ -143,12 +150,11 @@ class Home extends Component {
                                 firstFrameIndex = i;
                             }
                         })
-                        if (obj.keyframes[firstFrameIndex]) {
-                            child.position.x = obj.keyframes[firstFrameIndex].offset.x + obj.origin.x;
-                            child.position.y = obj.keyframes[firstFrameIndex].offset.y + obj.origin.y;
-                            child.position.z = obj.keyframes[firstFrameIndex].offset.z + obj.origin.z;
-                        }
+                        if (obj.keyframes[firstFrameIndex]) setProperties(
+                            obj.keyframes[firstFrameIndex].offset || defaultOffset,
+                            obj.keyframes[firstFrameIndex].rotation || defaultRotation)
                     } else {
+                        // console.log("between frames");
                         // is between frames
                         // need to get two bounding frames
                         var preframeIndex = 0;
@@ -168,16 +174,33 @@ class Home extends Component {
                         // get % progress
                         const x = (t - preframeTime) / (postframeTime - preframeTime);
 
-                        // convert to sinusoid
-                        const ts = Math.sin(Math.PI / 2 * x);
+                        var ts;
+                        switch(obj.easing) {
+                            case INTERPOLATIONS.SIN: ts = Math.sin(Math.PI * x - Math.PI / 2) / 2 + 1 / 2; break;
+                            default: ts = x;
+                        }
 
-                        const offset_x = (obj.keyframes[postframeIndex].offset.x - obj.keyframes[preframeIndex].offset.x) / (postframeTime - preframeTime) * ts;
-                        const offset_y = (obj.keyframes[postframeIndex].offset.y - obj.keyframes[preframeIndex].offset.y) / (postframeTime - preframeTime) * ts;
-                        const offset_z = (obj.keyframes[postframeIndex].offset.z - obj.keyframes[preframeIndex].offset.z) / (postframeTime - preframeTime) * ts;
+                        const preframe = obj.keyframes[preframeIndex];
+                        const postframe = obj.keyframes[postframeIndex];
 
-                        child.position.x = obj.origin.x + offset_x;
-                        child.position.y = obj.origin.y + offset_y;
-                        child.position.z = obj.origin.z + offset_z;
+                        if (!preframe.offset) preframe.offset = defaultOffset;
+                        if (!postframe.offset) postframe.offset = defaultOffset;
+                        if (!preframe.rotation) preframe.rotation = defaultRotation;
+                        if (!postframe.rotation) postframe.rotation = defaultRotation;
+
+                        const offset = {
+                            x: (postframe.offset.x - preframe.offset.x) * ts + preframe.offset.x,
+                            y: (postframe.offset.y - preframe.offset.y) * ts + preframe.offset.y,
+                            z: (postframe.offset.z - preframe.offset.z) * ts + preframe.offset.z
+                        }
+
+                        const rotation = {
+                            x: (postframe.rotation.x - preframe.rotation.x) * ts + preframe.rotation.x,
+                            y: (postframe.rotation.y - preframe.rotation.y) * ts + preframe.rotation.y,
+                            z: (postframe.rotation.z - preframe.rotation.z) * ts + preframe.rotation.z,
+                        }
+
+                        setProperties(offset, rotation);
                     }
                 }
 
