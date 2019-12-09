@@ -11,9 +11,9 @@ import {
 
 const subpages = {
   vehicle: {
-    ref: '/vehicle',
+    ref: '/team',
     component: <div>Primary Vehicle</div>,
-    title: 'Primary Vehicle'
+    title: 'Our Team'
   },
   gnc: {
     ref: '/gnctestbed',

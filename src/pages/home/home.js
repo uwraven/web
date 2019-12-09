@@ -4,70 +4,128 @@ import styles from './home.module.scss';
 import * as THREE from 'three';
 import {STLLoader} from 'three/examples/jsm/loaders/STLLoader';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
-import cadComponents, {INTERPOLATIONS, defaultOffset, defaultRotation} from './cadComponents';
+import Models, {INTERPOLATIONS, defaultOffset, defaultRotation, defaultScale} from './cadComponents';
+import Descriptions from './descriptions';
+
+const INTERVAL = 600;
 
 class Home extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-
+            y: 0,
+            selectedComponent: ""
         }
         this.initializeScene = this.initializeScene.bind(this);
         this.resizeListener = this.resizeListener.bind(this);
         this.wheelListener = this.wheelListener.bind(this);
         this.animateFrame = this.animateFrame.bind(this);
+        // this.finalTime = Models.map(model => model.keyframes.map(frame => frame.time).reduce((t,tn) => t = (tn > t) ? tn : t)).reduce()
     }
 
     componentDidMount() {
         this.initializeScene();
         window.addEventListener('resize', this.resizeListener);
         window.addEventListener('wheel', this.wheelListener);
-        this.y = 0;
+        // this.y = 0;
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.resizeListener);
+        window.removeEventListener("wheel", this.wheelListener);
     }
 
     render() {
+        const target = 300;
+        const displacement = Math.max(Math.min(-this.state.y * target, 0), -target);
+        console.log(displacement);
+        const containerStyle = {
+            transform: `translateX(${displacement}px)`
+        }
         return (
             <div className={styles.home}>
-                <div className={styles.threeContainer} ref={(ref) => {this.threeMount = ref} }></div>
+                <div style={containerStyle} className={styles.threeContainer} ref={(ref) => {this.threeMount = ref} }></div>
+                {/* <div className={styles.footerCover}></div> */}
+                <div className={styles.descriptionContainer}>
+                    {
+                        Descriptions.map((model, i) => {
+                            const t = this.state.y;
+                            if (this.state.selectedComponent !== model.objectId) {
+                                // set selected component for model editing if necessary
+                                this.setState({selectedComponent: model.objectId});
+                            }
+                            // console.log(t);
+                            if (model.timing.start <= t && t < model.timing.end) {
+                                // console.log("should display: ", i)
+                            return(
+                                <div className={styles.modelTile}>
+                                    <h2>{model.title}</h2>
+                                    <div className={styles.separator}></div>
+                                    <p>{model.description}</p>
+                                </div>
+                            )
+                            }
+                        })
+                    }
+                </div>
             </div>
         );
     }
 
     resizeListener() {
-        this.camera.aspect = this.threeMount.clientWidth / this.threeMount.clientHeight;
-        this.renderer.setSize(this.threeMount.clientWidth, this.threeMount.clientHeight );
-        this.camera.updateProjectionMatrix();
+        if (this.threeMount) {
+            this.camera.aspect = this.threeMount.clientWidth / this.threeMount.clientHeight;
+            this.renderer.setSize(this.threeMount.clientWidth, this.threeMount.clientHeight );
+            this.camera.updateProjectionMatrix();
+        }
     }
 
     wheelListener(e) {
         // console.log(e.deltaY, this.y);
-        this.y = Math.max(this.y + e.deltaY, 0);
+        this.setState({
+            y: Math.max(this.state.y + e.deltaY / INTERVAL, 0)
+        })
+        // this.y = Math.max(this.y + e.deltaY / INTERVAL, 0);
     }
 
     initializeScene() {
         this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera( 20, this.threeMount.clientWidth / this.threeMount.clientHeight, 0.1, 2000 );
+        this.scene.name = "scene";
+        this.camera = new THREE.PerspectiveCamera( 20, this.threeMount.clientWidth / this.threeMount.clientHeight, 0.1, 10000 );
         this.renderer = new THREE.WebGLRenderer({
             alpha: true,
             antialias: true
         });
         this.renderer.setSize( this.threeMount.clientWidth, this.threeMount.clientHeight);
         this.renderer.setPixelRatio(2.0);
+        // this.renderer.setClearColor(0xffffff);
         this.threeMount.appendChild(this.renderer.domElement);
 
-        this.scene.add( new THREE.AmbientLight( 0xffffff, 1.0, 200 ) );
-        var light = new THREE.PointLight( 0xffffff, 1, 1000 );
-        light.position.set( 200, 200, 100 );
-        light.name = "bulb";
-        this.scene.add( light );
+        var light = new THREE.SpotLight(0xffffff, 1.0);
+        light.position.set(200, 250, 200);
+        light.castShadow = true;
+        light.shadow.camera.far = 1000;
+        light.penumbra = 0.5;
+        light.lookAt(0, 0, 0);
+        this.scene.add(light);
+
+        this.scene.add( new THREE.AmbientLight( 0xe4f0ff, 2.5 ) );
 
         // create geometry from stl files
         this.loader = new STLLoader();
-        cadComponents.map(obj => {
+        Models.map(obj => {
             this.loader.load(`./cad/${obj.src}.stl`, (geometry) => {
                 // render object and center it
-                var material = new THREE.MeshPhysicalMaterial(obj.materialProperties);
+
+                // replace this material with properties from json
+                var material = new THREE.MeshPhysicalMaterial({
+                    color: 0xfefeff,
+                    emissive: 0x000003,
+                    reflectivity: 0.5,
+                    metalness: 0.95,
+                });
+
                 var bufferGeometry = this.bufferGeometryFromSTL(geometry);
                 var mesh = new THREE.Mesh(bufferGeometry, material);
                 mesh.position.set(obj.origin.x, obj.origin.y, obj.origin.z);
@@ -79,13 +137,15 @@ class Home extends Component {
 
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableZoom = false;
-        // this.controls.minPolarAngle = Math.PI / 2;
-        // this.controls.maxPolarAngle = Math.PI / 2;
+        this.controls.minPolarAngle = Math.PI / 2;
+        this.controls.maxPolarAngle = Math.PI / 2;
         this.controls.enablePan = false;
-        this.camera.position.z = 1000;
+        this.camera.position.z = 900;
+        // this.scene.translateX(-120);
+        // this.camera.translateX(120);
         
-        var axes = new THREE.AxesHelper(1000);
-        this.scene.add(axes);
+        // var axes = new THREE.AxesHelper(1000);
+        // this.scene.add(axes);
 
         const scope = this;
         var animate = function () {
@@ -97,13 +157,12 @@ class Home extends Component {
     }
 
     animateFrame(scope) {
-        scope.controls.update();
+        // scope.controls.update();
         scope.renderer.render(scope.scene, scope.camera);
-        cadComponents.map(obj => {
+        Models.map(obj => {
             let child = scope.scene.getObjectByName(obj.src);
             if (child) {
-                const INTERVAL = 1000; // 500 px
-                let t = scope.y / INTERVAL;
+                let t = scope.state.y;
 
                 // if between first and last frames, then perform interpolation between two bounding frames
                 // get first frame starting time
@@ -117,13 +176,16 @@ class Home extends Component {
                     const endTime = Math.max(...timestamps);
                     const startTime = Math.min(...timestamps);
 
-                    function setProperties(offset, rotation) {
+                    function setProperties(offset, rotation, scale) {
                         child.position.x = obj.origin.x + offset.x;
                         child.position.y = obj.origin.y + offset.y;
                         child.position.z = obj.origin.z + offset.z;
                         child.rotation.x = obj.rotation.x + rotation.x;
                         child.rotation.y = obj.rotation.y + rotation.y;
                         child.rotation.z = obj.rotation.z + rotation.z;
+                        if (scale !== 1){
+                            child.scale.set(scale, scale, scale);
+                        }
                     }
 
                     // TODO:: Consolidate this logic
@@ -140,7 +202,8 @@ class Home extends Component {
                         })
                         if (obj.keyframes[lastFrameIndex]) setProperties(
                                 obj.keyframes[lastFrameIndex].offset || defaultOffset,
-                                obj.keyframes[lastFrameIndex].rotation || defaultRotation)
+                                obj.keyframes[lastFrameIndex].rotation || defaultRotation,
+                                obj.keyframes[lastFrameIndex].scale || defaultScale)
                     } else if (t <= startTime) {
                         var firstFrameIndex = 0;
                         var firstFrameTime = 0;
@@ -152,7 +215,8 @@ class Home extends Component {
                         })
                         if (obj.keyframes[firstFrameIndex]) setProperties(
                             obj.keyframes[firstFrameIndex].offset || defaultOffset,
-                            obj.keyframes[firstFrameIndex].rotation || defaultRotation)
+                            obj.keyframes[firstFrameIndex].rotation || defaultRotation,
+                            obj.keyframes[firstFrameIndex].scale || defaultScale)
                     } else {
                         // console.log("between frames");
                         // is between frames
@@ -187,6 +251,8 @@ class Home extends Component {
                         if (!postframe.offset) postframe.offset = defaultOffset;
                         if (!preframe.rotation) preframe.rotation = defaultRotation;
                         if (!postframe.rotation) postframe.rotation = defaultRotation;
+                        if (!preframe.scale) preframe.scale = defaultScale;
+                        if (!postframe.scale) postframe.scale = defaultScale;
 
                         const offset = {
                             x: (postframe.offset.x - preframe.offset.x) * ts + preframe.offset.x,
@@ -200,7 +266,9 @@ class Home extends Component {
                             z: (postframe.rotation.z - preframe.rotation.z) * ts + preframe.rotation.z,
                         }
 
-                        setProperties(offset, rotation);
+                        const scale = (postframe.scale - preframe.scale) * ts + preframe.scale;
+
+                        setProperties(offset, rotation, scale);
                     }
                 }
 

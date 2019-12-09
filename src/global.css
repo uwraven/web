@@ -3,6 +3,11 @@ body, html, div, section, span {
     margin: 0;
 }
 
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
 body {
     font-family: "Open Sans";
 }
@@ -11,6 +16,15 @@ h1 {
     font-family: "Titillium Web", sans-serif;
     font-style: italic;
     font-size: 28px;
+    margin: 0;
+    padding: 0;
+}
+
+h2 {
+    font-family: "Titillium Web", sans-serif;
+    font-size: 24px;
+    margin: 0;
+    padding: 0;
 }
 
 span, p {
@@ -33,5 +47,6 @@ a:hover {
 #root {
     width: 100vw;
     height: 100vh;
-    background: lightblue
+    background: black;
+    overflow: auto;
 }

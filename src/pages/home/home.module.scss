@@ -6,13 +6,62 @@ canvas {
 }
 
 .home {
-    height: 100vh;
+    padding-top: 64px;
+    height: calc(100vh - 64px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;    
+    background-color: black;
+    background: radial-gradient(
+        50vw 20vh at 45vw 105%,
+        rgba(255, 255, 255, 0.5),
+        rgba(0, 0, 0, 0.0),
+    )
 }
 
 .threeContainer {
     // height: calc(100vh - 60px);
+    width: 100vw;
+    // margin-left: 10vw;
+    max-height: 100%; // ff bug with full page rendering
+}
 
-    width: 50vw;
-    height: calc(100% - 5px); // ff bug with full page rendering
-    background-color: lightyellow
+// MOBILE LISTENER TARGET
+// CLAMP THREE CONTAINER TRANSFORM TO PREVENT MOVEMENT ON MOBILE
+
+.descriptionContainer {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    color: white;
+    align-items: flex-start;
+    transition: opacity 100ms;
+    left: 50vw;
+    top: 20vh;
+    width: 40vw;
+
+    h2 {
+        margin-bottom: 12px;
+    }
+}
+
+.modelTile {
+    // padding: 20px;
+    border-radius: 10px;
+    width: 100%;
+    // box-shadow: 0 8px 8px rgba(0, 0 ,0, 0.1);
+}
+
+.separator {
+    border-bottom: 1px solid var(--border-gray);
+}
+
+.footerCover {
+    position: fixed;
+    width: 100vw;
+    height: 20px;
+    bottom: 0;
+    background: linear-gradient(rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 1.0),);
 }

@@ -6,37 +6,33 @@ const INTERPOLATIONS = {
 
 const defaultOffset = {x: 0, y: 0, z: 0}
 const defaultRotation = {x: 0, y: 0, z: 0}
+const defaultScale = 1;
 
 const metal = {
     reflectivity: 0.5,
-    metalness: 1.0,
+    metalness: 0.95,
+    roughness: 0.5,
     flatShading: false,
+    color: "white"
 };
 
 export {
     INTERPOLATIONS,
     defaultRotation,
-    defaultOffset
+    defaultOffset,
+    defaultScale
 }
 
 export default [
     {
         src: 'Payload_Fairing_rev1',
-        origin: {
-            x: 0,
-            y: 100,
-            z: 0,
-        },
-        rotation: {
-            x: 0,
-            y: 0,
-            z: 0
-        },
-        easing: INTERPOLATIONS.LINEAR,
+        origin: {x: 0, y: 100, z: 0},
+        rotation: {x: 0, y: 0, z: 0},
+        easing: INTERPOLATIONS.SIN,
         materialProperties: metal,
         keyframes: [
             {
-                time: 0,
+                time: 1,
                 offset: {
                     x: 0,
                     y: 0,
@@ -47,28 +43,46 @@ export default [
                 time: 1,
                 offset: {
                     x: 0,
-                    y: 25,
+                    y: -75,
                     z: 0,
                 },
                 rotation: {
+                    x: -Math.PI / 8,
+                    y: 0,
+                    z: 0
+                },
+                scale: 5,
+            },
+            {
+                time: 3,
+                offset: {
+                    x: 0,
+                    y: -50,
+                    z: 0,
+                },
+                rotation: {
+                    x: -Math.PI / 8,
+                    y: 0,
+                    z: 0
+                },
+                scale: 5,
+            },
+            {
+                time: 4.5,
+                offset: {
                     x: 0,
                     y: 0,
-                    z: Math.PI / 2,
+                    z: 0,
                 }
             },
             {
-                time: 2,
+                time: 5,
                 offset: {
                     x: 0,
-                    y: 50,
+                    y: 100,
                     z: 0,
-                },
-                rotation: {
-                    x: 0,
-                    y: 0,
-                    z: Math.PI
                 }
-            },
+            }
         ],
     },
     {
@@ -83,32 +97,53 @@ export default [
             y: 0,
             z: 0,
         },
+        easing: INTERPOLATIONS.SIN, 
         materialProperties: metal,
         keyframes: [
             {
-                time: 0,
+                time: 1,
                 offset: {
                     x: 0,
                     y: 0,
                     z: 0
+                },
+            },
+            {
+                time: 2,
+                offset: {
+                    x: 0,
+                    y: -300,
+                    z: 0,
                 }
             },
             {
-                time: 1,
+                time: 3.0,
                 offset: {
-                    x: -30,
+                    x: 0,
+                    y: -300,
+                    z: 0,
+                }
+            },
+        
+            {
+                time: 4.5,
+                offset: {
+                    x: 0,
                     y: 0,
-                    z: 0
-                }
+                    z: 0,
+                },
+                scale: 1
             },
             {
-                time: 5,
-                offset: {
-                    x: -30,
-                    y: 30,
-                    z: 100
+                time: 5.5,
+                scale: 2,
+                rotation: {
+                    x: Math.PI / 12,
+                    y: 0,
+                    z: 0,
                 }
-            },
+            }
+
         ]
     },
     //     {

@@ -1,6 +1,6 @@
 :root {
     --purple: rgb(75, 46, 131);
     --purple-hover: rgb(105, 63, 189);
-    
-    --border-gray: #DFDFDF;
+    --border-gray: #333;
+
 }
