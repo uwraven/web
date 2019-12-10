@@ -138,9 +138,9 @@ export default [
                 time: 5.5,
                 scale: 2,
                 rotation: {
-                    x: Math.PI / 12,
+                    x: -Math.PI / 12,
                     y: 0,
-                    z: 0,
+                    z: Math.PI / 12,
                 }
             }
 

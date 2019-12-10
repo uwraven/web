@@ -15,7 +15,8 @@ class Home extends Component {
         super(props);
         this.state = {
             y: 0,
-            selectedComponent: ""
+            selectedComponent: "",
+            innerWidth: window.innerWidth
         }
         this.initializeScene = this.initializeScene.bind(this);
         this.resizeListener = this.resizeListener.bind(this);
@@ -37,9 +38,16 @@ class Home extends Component {
     }
 
     render() {
-        const target = 300;
+        const target = (this.state.innerWidth < 760) ? (this.state.innerWidth < 540) ? 0 : 150 : 300;
+
         const displacement = Math.max(Math.min(-this.state.y * target, 0), -target);
-        console.log(displacement);
+
+        if (this.state.innerWidth < 760 && this.controls) {
+            this.controls.enabled = false;
+        } else if (this.state.innerWidth > 760 && this.controls) {
+            this.controls.enabled = true;
+        }
+
         const containerStyle = {
             transform: `translateX(${displacement}px)`
         }
@@ -79,6 +87,9 @@ class Home extends Component {
             this.renderer.setSize(this.threeMount.clientWidth, this.threeMount.clientHeight );
             this.camera.updateProjectionMatrix();
         }
+        this.setState({
+            innerWidth: window.innerWidth
+        })
     }
 
     wheelListener(e) {
@@ -115,7 +126,7 @@ class Home extends Component {
         // create geometry from stl files
         this.loader = new STLLoader();
         Models.map(obj => {
-            this.loader.load(`./cad/${obj.src}.stl`, (geometry) => {
+            this.loader.load(`cad/${obj.src}.stl`, (geometry) => {
                 // render object and center it
 
                 // replace this material with properties from json

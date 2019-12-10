@@ -60,11 +60,40 @@
     }
 
     .mobileButton {
-        width: 40px;
-        height: 40px;
+        width: 24px;
+        height: 16px;
+        padding: 4px;
         margin-left: 16px;
-        border-radius: 4px;
-        background: white;
+        // border-radius: 4px;
+        // background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        div {
+            position: fixed;
+            width: 24px;
+            height: 2px;
+            background: white;
+            border-radius: 1.5px;
+            transition: transform 200ms;
+        }
+        div:first-child {
+            transform: translateY(-8px);
+        }
+        div:last-child {
+            transform: translateY(8px);
+        }
+    }
+
+    .mobileButtonExpanded {
+        div:first-child {
+            transform: rotate(-45deg);
+        }
+
+        div:last-child {
+            transform: rotate(45deg);
+        }
     }
 
     .navigationList {
@@ -75,7 +104,7 @@
         position: absolute;
         left: 0;
         top: 64px;
-        transition: height 100ms;
+        transition: height 500ms;
         display: flex;
         flex-direction: column;
         height: 0;
@@ -85,12 +114,15 @@
         border-top: 1px solid var(--border-gray);
 
         ul {
-            padding: 0 16px;
+            padding: 0 32px;
+            margin: 0;
             li {
-                margin-bottom: 16px;
+                padding: 8px 16px 14px 16px;
+                border-bottom: 1px solid var(--border-gray);
                 a {
                     color: white;
-                    font-size: 24px;
+                    font-size: 20px;
+                    // line-height: 32px;
                 }
             }
         }
