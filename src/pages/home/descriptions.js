@@ -6,36 +6,46 @@ const FullVehicle = () => <div>
 
 export default [
     {
-        title: "Full vehicle",
-        description: "",
-        externalLink: "",
+        title: "Raven Vehicle",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur vel odio lectus. Vestibulum congue ligula lectus, vitae tincidunt nulla facilisis quis. Vestibulum ullamcorper, lectus a maximus consectetur, ipsum mauris rhoncus metus, a aliquet nunc mi nec metus.",
+        externalLink: "https://kilometercreative.com",
         routerLink: "",
         objectId: "",
+        stats: [
+            {
+                label: "Oxidizer",
+                content: "NOx",
+            },
+            {
+                label: "Fuel",
+                content: "Ethanol",
+            },
+        ],
         timing: {
-            start: 1.0,
+            start: 0.4,
             end: 1.5
         },
     },
     {
         title: "Fairing",
-        description: "Test description 1",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam suscipit libero et nunc fringilla maximus. Pellentesque est quam, sollicitudin et rutrum non, tempus et tortor. Curabitur vel mauris augue. Fusce lobortis eu nisl at ultrices. Cras id ex dictum, volutpat est at, pellentesque urna. Nullam gravida ligula a nunc aliquam fermentum. Quisque semper mauris nec tempus scelerisque. Ut posuere accumsan lacinia. Sed lobortis pretium ex vitae rutrum.",
         externalLink: "",
         routerLink: "",
         objectId: "",
         timing: {
-            start: 1.5,
-            end: 4.0
+            start: 1.3,
+            end: 2.5
         },
     },
     {
         title: "Main stage",
-        description: "Test description 2",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam suscipit libero et nunc fringilla maximus. Pellentesque est quam, sollicitudin et rutrum non, tempus et tortor. Curabitur vel mauris augue. Fusce lobortis eu nisl at ultrices. Cras id ex dictum, volutpat est at, pellentesque urna. Nullam gravida ligula a nunc aliquam fermentum. Quisque semper mauris nec tempus scelerisque. Ut posuere accumsan lacinia. Sed lobortis pretium ex vitae rutrum.",
         externalLink: "",
         routerLink: "",
         objectId: "",
         timing: {
-            start: 4.0,
-            end: 1000
+            start: 2.3,
+            end: 3.5
         },
     }
 ]

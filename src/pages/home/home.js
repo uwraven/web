@@ -4,10 +4,8 @@ import styles from './home.module.scss';
 import * as THREE from 'three';
 import {STLLoader} from 'three/examples/jsm/loaders/STLLoader';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
-import Models, {INTERPOLATIONS, defaultOffset, defaultRotation, defaultScale} from './cadComponents';
+import Models, {INTERPOLATIONS, defaultOffset, defaultRotation, defaultScale } from './cadComponents';
 import Descriptions from './descriptions';
-
-const INTERVAL = 600;
 
 class Home extends Component {
 
@@ -16,64 +14,90 @@ class Home extends Component {
         this.state = {
             y: 0,
             selectedComponent: "",
-            innerWidth: window.innerWidth
+            innerWidth: window.innerWidth,
+            enableOrbit: true
         }
         this.initializeScene = this.initializeScene.bind(this);
         this.resizeListener = this.resizeListener.bind(this);
         this.wheelListener = this.wheelListener.bind(this);
         this.animateFrame = this.animateFrame.bind(this);
-        // this.finalTime = Models.map(model => model.keyframes.map(frame => frame.time).reduce((t,tn) => t = (tn > t) ? tn : t)).reduce()
+        this.onTouch = this.onTouch.bind(this);
+    }
+
+    onTouch(e) {
+        console.log("DISABLE ORBIT");
+        this.setState({enableOrbit: false});
     }
 
     componentDidMount() {
         this.initializeScene();
         window.addEventListener('resize', this.resizeListener);
-        window.addEventListener('wheel', this.wheelListener);
+        if (this.contentMount) {
+            console.log("mounted");
+            this.contentMount.addEventListener('scroll', this.wheelListener);
+        }
+        // window.addEventListener('scroll', this.wheelListener)
+        window.addEventListener('touchstart', this.onTouch);
         // this.y = 0;
     }
 
     componentWillUnmount() {
         window.removeEventListener("resize", this.resizeListener);
-        window.removeEventListener("wheel", this.wheelListener);
+        this.contentMount.removeEventListener("scroll", this.wheelListener);
+        window.removeEventListener("touchstart", this.onTouch);
     }
 
     render() {
-        const target = (this.state.innerWidth < 760) ? (this.state.innerWidth < 540) ? 0 : 150 : 300;
+        // const target = (this.state.innerWidth < 840) ? (this.state.innerWidth < 540) ? 0 : 150 : 300;
+
+        const target = (this.state.innerWidth < 540) ? 0 : window.innerWidth / 4;
 
         const displacement = Math.max(Math.min(-this.state.y * target, 0), -target);
-
-        if (this.state.innerWidth < 760 && this.controls) {
-            this.controls.enabled = false;
-        } else if (this.state.innerWidth > 760 && this.controls) {
-            this.controls.enabled = true;
-        }
 
         const containerStyle = {
             transform: `translateX(${displacement}px)`
         }
+
+        if (this.controls) this.controls.enabled = this.state.enableOrbit;
+
         return (
-            <div className={styles.home}>
-                <div style={containerStyle} className={styles.threeContainer} ref={(ref) => {this.threeMount = ref} }></div>
+            <div className={styles.home} ref={(ref) => {this.contentMount = ref}}>
+                <div className={styles.threeContainer}>
+                    <div style={containerStyle} className={styles.threeInnerContainer} ref={(ref) => {this.threeMount = ref} }></div>
+                </div>
                 {/* <div className={styles.footerCover}></div> */}
                 <div className={styles.descriptionContainer}>
                     {
                         Descriptions.map((model, i) => {
-                            const t = this.state.y;
-                            if (this.state.selectedComponent !== model.objectId) {
-                                // set selected component for model editing if necessary
-                                this.setState({selectedComponent: model.objectId});
-                            }
-                            // console.log(t);
-                            if (model.timing.start <= t && t < model.timing.end) {
-                                // console.log("should display: ", i)
+                            const t = (this.state.y) / 2;
+                            const opacity = (window.innerWidth > 540) ? (model.timing.start <= t && t < model.timing.end) ? 1.0 : 0.0 : 1.0
                             return(
-                                <div className={styles.modelTile}>
-                                    <h2>{model.title}</h2>
-                                    <div className={styles.separator}></div>
-                                    <p>{model.description}</p>
+                                <div style={{
+                                    opacity: opacity
+                                    }} className={styles.modelContainer}>
+                                    { (model.inner) ? model.inner
+                                    :
+                                    <div className={styles.modelTile}>
+                                        <h2>{model.title}</h2>
+                                        <div className={styles.separator}></div>
+                                        <p className={styles.modelDescription}>{model.description}</p>
+                                        <div className={styles.stats}>  
+                                            { (model.stats) && model.stats.map((stat) => {
+                                                return(
+                                                    <div className={styles.statContainer}>
+                                                        <p className={styles.statLabel}>{stat.label}</p>
+                                                        <div className={styles.statInnerContainer}>
+                                                            <h3>{stat.content}</h3>
+                                                            <span>{stat.unit}</span>
+                                                        </div>
+                                                    </div>
+                                                )
+                                            })}
+                                        </div>
+                                    </div>
+                                    }
                                 </div>
                             )
-                            }
                         })
                     }
                 </div>
@@ -92,12 +116,14 @@ class Home extends Component {
         })
     }
 
-    wheelListener(e) {
-        // console.log(e.deltaY, this.y);
+    wheelListener() {
+        // this.setState({
+        //     y: Math.max(window.scrollY / INTERVAL, 0)
+        // })
+        // console.log(e.target.scrollTop)
         this.setState({
-            y: Math.max(this.state.y + e.deltaY / INTERVAL, 0)
+            y: Math.max(this.contentMount.scrollTop / window.innerHeight * 2, 0)
         })
-        // this.y = Math.max(this.y + e.deltaY / INTERVAL, 0);
     }
 
     initializeScene() {
@@ -170,7 +196,7 @@ class Home extends Component {
     animateFrame(scope) {
         // scope.controls.update();
         scope.renderer.render(scope.scene, scope.camera);
-        Models.map(obj => {
+        Models.map((obj, i) => {
             let child = scope.scene.getObjectByName(obj.src);
             if (child) {
                 let t = scope.state.y;
@@ -238,7 +264,7 @@ class Home extends Component {
                         var postframeTime = endTime;
 
                         obj.keyframes.map((frame, i) => {
-                            if (t > frame.time && preframeTime < frame.time) {
+                            if (t >= frame.time && preframeTime < frame.time) {
                                 preframeIndex = i; preframeTime = frame.time;
                             }
                             if (t < frame.time && frame.time < postframeTime) {
@@ -247,9 +273,12 @@ class Home extends Component {
                         })
 
                         // get % progress
+                        // if ((postframeTime - preframeTime) < 10e-8) {
+                        //     // console.log("singularity")
+                        // }
                         const x = (t - preframeTime) / (postframeTime - preframeTime);
 
-                        var ts;
+                        let ts = 1;
                         switch(obj.easing) {
                             case INTERPOLATIONS.SIN: ts = Math.sin(Math.PI * x - Math.PI / 2) / 2 + 1 / 2; break;
                             default: ts = x;

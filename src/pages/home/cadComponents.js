@@ -23,24 +23,22 @@ export {
     defaultScale
 }
 
-export default [
+const models = [
     {
         src: 'Payload_Fairing_rev1',
         origin: {x: 0, y: 100, z: 0},
         rotation: {x: 0, y: 0, z: 0},
-        easing: INTERPOLATIONS.SIN,
+        easing: INTERPOLATIONS.LINEAR,
         materialProperties: metal,
         keyframes: [
             {
                 time: 1,
-                offset: {
-                    x: 0,
-                    y: 0,
-                    z: 0
-                }
             },
             {
-                time: 1,
+                time: 1.5,
+            },
+            {
+                time: 2.5,
                 offset: {
                     x: 0,
                     y: -75,
@@ -54,7 +52,7 @@ export default [
                 scale: 5,
             },
             {
-                time: 3,
+                time: 3.5,
                 offset: {
                     x: 0,
                     y: -50,
@@ -76,7 +74,7 @@ export default [
                 }
             },
             {
-                time: 5,
+                time: 5.0,
                 offset: {
                     x: 0,
                     y: 100,
@@ -97,7 +95,7 @@ export default [
             y: 0,
             z: 0,
         },
-        easing: INTERPOLATIONS.SIN, 
+        easing: INTERPOLATIONS.LINEAR, 
         materialProperties: metal,
         keyframes: [
             {
@@ -146,114 +144,28 @@ export default [
 
         ]
     },
-    //     {
-    //     src: 'Payload_Platform_Black',
-    //     origin: {
-    //         x: 0,
-    //         y: -100,
-    //         z: 0,
-    //     },
-    //     rotation: {
-    //         x: 0,
-    //         y: 0,
-    //         z: 0
-    //     }
-    // },
-    // {
-    //     src: 'Stage_1_Cover',
-    //     origin: {
-    //         x: 0,
-    //         y: 0,
-    //         z: 0,
-    //     }
-    // },
-    // {
-    //     src: 'Stage_1_Engines_rev1',
-    //     origin: {
-    //         x: 0,
-    //         y: 0,
-    //         z: 0,
-    //     }
-    // },
-    // {
-    //     src: 'Stage_1_Engines_Grey',
-    //     origin: {
-    //         x: 0, 
-    //         y: 0,
-    //         z: 0
-    //     }
-    // },
-    // {
-    //     src: 'Stage_1_Top_Ring_Grey',
-    //     origin: {
-    //         x: 0,
-    //         y: 76,
-    //         z: 0,
-    //     },
-    //     separation: 1.0
-    // },
-    // {
-    //     src: 'Stage_2_Cover',
-    //     origin: {
-    //         x: 0,
-    //         y: 0,
-    //         z: 0,
-    //     }
-    // },
-    // {
-    //     src: 'Stage_2_Engine_Nozzle_Black',
-    //     origin: {
-    //         x: 0,
-    //         y: 0,
-    //         z: 0,
-    //     }
-    // },
-    // {
-    //     src: 'Stage_2_Tank_rev1',
-    //     origin: {
-    //         x: 0,
-    //         y: 0,
-    //         z: 0,
-    //     }
-    // },
-    // {
-    //     src: 'Stage_2_Small_Batteries_Grey',
-    //     origin: {
-    //         x: 0,
-    //         y: 0,
-    //         z: 0,
-    //     }
-    // },
-    // {
-    //     src: 'Stage_2_Small_Cylindrical_Tank_Grey',
-    //     origin: {
-    //         x: 0,
-    //         y: 0,
-    //         z: 0,
-    //     }
-    // },
-    // {
-    //     src: 'Stage_2_Tank_rev1',
-    //     origin: {
-    //         x: 0,
-    //         y: 0,
-    //         z: 0,
-    //     }
-    // },
-    // {
-    //     src: 'Stage_2_Top_Ring_Grey',
-    //     origin: {
-    //         x: 0,
-    //         y: 0,
-    //         z: 0,
-    //     }
-    // },
-    // {
-    //     src: 'Stage_2_Engine_Nozzle_Grey',
-    //     origin: {
-    //         x: 0,
-    //         y: 0,
-    //         z: 0,
-    //     }
-    // }
 ]
+
+models.map((model) => {
+    if (!model.origin) {
+        console.warn("No origin provided for model: ", model.src)
+        model.origin = defaultOffset
+    }
+    if (model.easing === undefined) {
+        console.warn("No easing mode provided for model: ", model.src);
+        model.easing = INTERPOLATIONS.LINEAR
+    }
+    if (!model.rotation) {
+        model.rotation = defaultRotation
+    }
+    model.keyframes.map((frame) => {
+        if (!frame.offset) frame.offset = defaultOffset
+        if (!frame.rotation) frame.rotation = defaultRotation
+        if (!frame.scale) frame.scale = defaultScale
+        return frame;
+    })
+})
+
+console.log(models)
+
+export default models;
