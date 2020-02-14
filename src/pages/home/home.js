@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styles from './home.module.scss';
 import * as THREE from 'three';
-import {STLLoader} from 'three/examples/jsm/loaders/STLLoader';
+import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 import Models, {INTERPOLATIONS, defaultOffset, defaultRotation, defaultScale } from './cadComponents';
 import Descriptions from './descriptions';
@@ -150,27 +150,29 @@ class Home extends Component {
         this.scene.add( new THREE.AmbientLight( 0xe4f0ff, 2.5 ) );
 
         // create geometry from stl files
-        this.loader = new STLLoader();
-        Models.map(obj => {
-            this.loader.load(`cad/${obj.src}.stl`, (geometry) => {
-                // render object and center it
+        this.loader = new GLTFLoader();
+        // Models.map(obj => {
+        this.loader.load(`cad/saw.gltf`, (geometry) => {
+            // render object and center it
 
-                // replace this material with properties from json
-                var material = new THREE.MeshPhysicalMaterial({
-                    color: 0xfefeff,
-                    emissive: 0x000003,
-                    reflectivity: 0.5,
-                    metalness: 0.95,
-                });
+            // replace this material with properties from json
+            var material = new THREE.MeshPhysicalMaterial({
+                color: 0xfefeff,
+                emissive: 0x000003,
+                reflectivity: 0.5,
+                metalness: 0.95,
+            });
 
-                var bufferGeometry = this.bufferGeometryFromSTL(geometry);
-                var mesh = new THREE.Mesh(bufferGeometry, material);
-                mesh.position.set(obj.origin.x, obj.origin.y, obj.origin.z);
-                mesh.receiveShadow = true;
-                mesh.name = obj.src;
-                this.scene.add(mesh);
-            })
-        });
+            console.log(geometry);
+
+            // var bufferGeometry = this.bufferGeometryFromSTL(geometry);
+            // var mesh = new THREE.Mesh(geometry, material);
+            // mesh.position.set(obj.origin.x, obj.origin.y, obj.origin.z);
+            // mesh.receiveShadow = true;
+            // mesh.name = obj.src;
+            this.scene.add(geometry.scene);
+        })
+        // });
 
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableZoom = false;
@@ -200,6 +202,8 @@ class Home extends Component {
             let child = scope.scene.getObjectByName(obj.src);
             if (child) {
                 let t = scope.state.y;
+
+                if (scope.contentMount.scrollTop <= 1) t = 0;
 
                 // if between first and last frames, then perform interpolation between two bounding frames
                 // get first frame starting time

@@ -2,7 +2,8 @@ import React from 'react';
 import { 
   BrowserRouter as Router,
   Switch,
-  Route
+  Route, 
+  Redirect
  } from 'react-router-dom'
 import Navigator from './components/navigator/navigator';
 import {
@@ -31,7 +32,7 @@ const subpages = {
 function App() {
   return (
     <Router>
-      <Navigator home={'/'} refs={subpages}/>
+      <Navigator home={'/contact'} refs={subpages}/>
       <Switch>
         <Route exact path='/'>
           { <Home></Home> } 
@@ -42,6 +43,7 @@ function App() {
               { subpages[key].component }
             </Route>)
         }
+        <Redirect to={{pathname: '/'}}/>
       </Switch>
     </Router>
   );
