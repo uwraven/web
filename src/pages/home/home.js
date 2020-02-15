@@ -63,6 +63,7 @@ class Home extends Component {
         return (
             <div className={styles.home} ref={(ref) => {this.contentMount = ref}}>
                 <div className={styles.threeContainer}>
+                    {this.state.progress < 1.0 && <h1>{this.state.progress}</h1>}
                     <div style={containerStyle} className={styles.threeInnerContainer} ref={(ref) => {this.threeMount = ref} }></div>
                 </div>
                 {/* <div className={styles.footerCover}></div> */}
@@ -127,6 +128,7 @@ class Home extends Component {
     }
 
     initializeScene() {
+        this.loadingManager = new THREE.LoadingManager();
         this.scene = new THREE.Scene();
         this.scene.name = "scene";
         this.camera = new THREE.PerspectiveCamera( 20, this.threeMount.clientWidth / this.threeMount.clientHeight, 0.1, 10000 );
@@ -139,29 +141,47 @@ class Home extends Component {
         // this.renderer.setClearColor(0xffffff);
         this.threeMount.appendChild(this.renderer.domElement);
 
-        var light = new THREE.SpotLight(0xffffff, 1.0);
+        var light = new THREE.SpotLight(0xffffff, 0);
         light.position.set(200, 250, 200);
         light.castShadow = true;
         light.shadow.camera.far = 1000;
         light.penumbra = 0.5;
         light.lookAt(0, 0, 0);
+        light.name = "spotlight";
         this.scene.add(light);
 
-        this.scene.add( new THREE.AmbientLight( 0xe4f0ff, 2.5 ) );
+        var ambientLight = new THREE.AmbientLight( 0xe4f0ff, 0);
+        ambientLight.name = "scenelight";
+        this.scene.add( ambientLight );
 
         // create geometry from stl files
-        this.loader = new GLTFLoader();
+        this.loader = new GLTFLoader(this.loadingManager);
+        console.log(this.loadingManager);
+        // this.loadManager.itemEnd(`cad/saw.gltf`)
+        this.loadingManager.onStart = (url, items, total) => {
+            console.log(`started: ${url} with items ${items} for total: ${total}`);
+        }
+        this.loadingManager.onProgress = (url, items, total) => {
+            console.log(`progress on ${url} for items ${items} at total: ${total}`);
+        }
+        this.loadingManager.onLoad = () => {
+            console.log("finished loading");
+            // ambientLight.intensity = 1.5;
+            // light.intensity = 1.0;
+            this.loaded = true;
+        }
+        // this.loadManager.onProgress(); 
         // Models.map(obj => {
         this.loader.load(`cad/saw.gltf`, (geometry) => {
             // render object and center it
 
             // replace this material with properties from json
-            var material = new THREE.MeshPhysicalMaterial({
-                color: 0xfefeff,
-                emissive: 0x000003,
-                reflectivity: 0.5,
-                metalness: 0.95,
-            });
+            // var material = new THREE.MeshPhysicalMaterial({
+            //     color: 0xfefeff,
+            //     emissive: 0x000003,
+            //     reflectivity: 0.5,
+            //     metalness: 0.95,
+            // });
 
             console.log(geometry);
 
@@ -169,9 +189,10 @@ class Home extends Component {
             // var mesh = new THREE.Mesh(geometry, material);
             // mesh.position.set(obj.origin.x, obj.origin.y, obj.origin.z);
             // mesh.receiveShadow = true;
+            geometry.scene.children.map(child => child.receiveShadow = true);
             // mesh.name = obj.src;
             this.scene.add(geometry.scene);
-        })
+        });
         // });
 
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
@@ -198,6 +219,15 @@ class Home extends Component {
     animateFrame(scope) {
         // scope.controls.update();
         scope.renderer.render(scope.scene, scope.camera);
+
+        // Animate lights in
+        if (scope.loaded) {
+            let spotlight = scope.scene.getObjectByName('spotlight');
+            let scenelight = scope.scene.getObjectByName('scenelight')
+            if (spotlight.intensity < 1.8) spotlight.intensity += 1 / 60;
+            if (scenelight.intensity < 0.8) scenelight.intensity += 0.2 / 60;
+        }
+
         Models.map((obj, i) => {
             let child = scope.scene.getObjectByName(obj.src);
             if (child) {

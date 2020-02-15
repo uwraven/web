@@ -32,7 +32,7 @@ const subpages = {
 function App() {
   return (
     <Router>
-      <Navigator home={'/contact'} refs={subpages}/>
+      <Navigator home={'/'} refs={subpages}/>
       <Switch>
         <Route exact path='/'>
           { <Home></Home> } 
