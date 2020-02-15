@@ -5,21 +5,16 @@ import {
   Route, 
   Redirect
  } from 'react-router-dom'
-import Navigator from './components/navigator/navigator';
+import Navigator from './Components/Navigator/Navigator';
 import {
   Home
-} from './pages'
+} from './Pages/Index'
 
 const subpages = {
   vehicle: {
     ref: '/team',
     component: <div>Primary Vehicle</div>,
-    title: 'Our Team'
-  },
-  gnc: {
-    ref: '/gnctestbed',
-    component: <div>GNC</div>,
-    title: 'GNC Testbed'
+    title: 'Team'
   },
   contact: {
     ref: '/contact',

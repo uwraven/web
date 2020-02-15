@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import styles from './home.module.scss';
+import styles from './Home.module.scss';
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
-import Models, {INTERPOLATIONS, defaultOffset, defaultRotation, defaultScale } from './cadComponents';
-import Descriptions from './descriptions';
+import Models, {INTERPOLATIONS, defaultOffset, defaultRotation, defaultScale } from './CadComponents';
 
 class Home extends Component {
 
@@ -65,43 +64,7 @@ class Home extends Component {
                 <div className={styles.threeContainer}>
                     {this.state.progress < 1.0 && <h1>{this.state.progress}</h1>}
                     <div style={containerStyle} className={styles.threeInnerContainer} ref={(ref) => {this.threeMount = ref} }></div>
-                </div>
-                {/* <div className={styles.footerCover}></div> */}
-                <div className={styles.descriptionContainer}>
-                    {
-                        Descriptions.map((model, i) => {
-                            const t = (this.state.y) / 2;
-                            const opacity = (window.innerWidth > 540) ? (model.timing.start <= t && t < model.timing.end) ? 1.0 : 0.0 : 1.0
-                            return(
-                                <div style={{
-                                    opacity: opacity
-                                    }} className={styles.modelContainer}>
-                                    { (model.inner) ? model.inner
-                                    :
-                                    <div className={styles.modelTile}>
-                                        <h2>{model.title}</h2>
-                                        <div className={styles.separator}></div>
-                                        <p className={styles.modelDescription}>{model.description}</p>
-                                        <div className={styles.stats}>  
-                                            { (model.stats) && model.stats.map((stat) => {
-                                                return(
-                                                    <div className={styles.statContainer}>
-                                                        <p className={styles.statLabel}>{stat.label}</p>
-                                                        <div className={styles.statInnerContainer}>
-                                                            <h3>{stat.content}</h3>
-                                                            <span>{stat.unit}</span>
-                                                        </div>
-                                                    </div>
-                                                )
-                                            })}
-                                        </div>
-                                    </div>
-                                    }
-                                </div>
-                            )
-                        })
-                    }
-                </div>
+                </div>            
             </div>
         );
     }
@@ -128,6 +91,7 @@ class Home extends Component {
     }
 
     initializeScene() {
+        this.clock = new THREE.Clock();
         this.loadingManager = new THREE.LoadingManager();
         this.scene = new THREE.Scene();
         this.scene.name = "scene";
@@ -172,7 +136,7 @@ class Home extends Component {
         }
         // this.loadManager.onProgress(); 
         // Models.map(obj => {
-        this.loader.load(`cad/saw.gltf`, (geometry) => {
+        this.loader.load(`cad/RAVENV10.glb`, (model) => {
             // render object and center it
 
             // replace this material with properties from json
@@ -183,24 +147,30 @@ class Home extends Component {
             //     metalness: 0.95,
             // });
 
-            console.log(geometry);
+            console.log(model);
 
             // var bufferGeometry = this.bufferGeometryFromSTL(geometry);
             // var mesh = new THREE.Mesh(geometry, material);
             // mesh.position.set(obj.origin.x, obj.origin.y, obj.origin.z);
             // mesh.receiveShadow = true;
-            geometry.scene.children.map(child => child.receiveShadow = true);
+            model.scene.children.map(child => child.receiveShadow = true);
+            this.mixer = new THREE.AnimationMixer(model.scene);
+            model.animations.map((clip) => this.mixer.clipAction(clip).play());
+
+            // geometry.scene.scale.set(10);
             // mesh.name = obj.src;
-            this.scene.add(geometry.scene);
+            this.scene.add(model.scene);
         });
         // });
 
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-        this.controls.enableZoom = false;
-        this.controls.minPolarAngle = Math.PI / 2;
-        this.controls.maxPolarAngle = Math.PI / 2;
-        this.controls.enablePan = false;
-        this.camera.position.z = 900;
+        // this.controls.enableZoom = false;
+        // this.controls.minPolarAngle = Math.PI / 2;
+        // this.controls.maxPolarAngle = Math.PI / 2;
+        // this.controls.enablePan = false;
+        this.camera.position.z = 5;
+        this.camera.position.y = 1;
+        this.controls.target = new THREE.Vector3(0, 1, 0);
         // this.scene.translateX(-120);
         // this.camera.translateX(120);
         
@@ -211,6 +181,8 @@ class Home extends Component {
         var animate = function () {
           requestAnimationFrame( animate );
           scope.animateFrame(scope);
+          let dt = scope.clock.getDelta();
+          if (scope.mixer) scope.mixer.update(dt);
         };
 
         animate();
@@ -224,149 +196,10 @@ class Home extends Component {
         if (scope.loaded) {
             let spotlight = scope.scene.getObjectByName('spotlight');
             let scenelight = scope.scene.getObjectByName('scenelight')
-            if (spotlight.intensity < 1.8) spotlight.intensity += 1 / 60;
-            if (scenelight.intensity < 0.8) scenelight.intensity += 0.2 / 60;
+            if (spotlight.intensity < 1.0) spotlight.intensity += 1 / 60;
+            if (scenelight.intensity < 0.3) scenelight.intensity += 0.2 / 60;
         }
 
-        Models.map((obj, i) => {
-            let child = scope.scene.getObjectByName(obj.src);
-            if (child) {
-                let t = scope.state.y;
-
-                if (scope.contentMount.scrollTop <= 1) t = 0;
-
-                // if between first and last frames, then perform interpolation between two bounding frames
-                // get first frame starting time
-
-                // make sure the frames are in the correct order;
-                // var orderedFrames = obj.keyframes.sort((a, b) => (a.time !== b.time) ? (a.time > b.time) ? 1 : 0 : 0);
-
-                if (obj.keyframes.length > 1) {
-
-                    const timestamps = obj.keyframes.map(frame => frame.time);
-                    const endTime = Math.max(...timestamps);
-                    const startTime = Math.min(...timestamps);
-
-                    function setProperties(offset, rotation, scale) {
-                        child.position.x = obj.origin.x + offset.x;
-                        child.position.y = obj.origin.y + offset.y;
-                        child.position.z = obj.origin.z + offset.z;
-                        child.rotation.x = obj.rotation.x + rotation.x;
-                        child.rotation.y = obj.rotation.y + rotation.y;
-                        child.rotation.z = obj.rotation.z + rotation.z;
-                        if (scale !== 1){
-                            child.scale.set(scale, scale, scale);
-                        }
-                    }
-
-                    // TODO:: Consolidate this logic
-                    if (t >= endTime) {
-                        // outside of keyframes, clamp to last frame 
-                        // assumes that the frames are not strictly sorted
-                        var lastFrameTime = 0;
-                        var lastFrameIndex = 0;
-                        obj.keyframes.map((frame, i) => {
-                            if (frame.time > lastFrameTime) {
-                                lastFrameTime = frame.time;
-                                lastFrameIndex = i;
-                            }
-                        })
-                        if (obj.keyframes[lastFrameIndex]) setProperties(
-                                obj.keyframes[lastFrameIndex].offset || defaultOffset,
-                                obj.keyframes[lastFrameIndex].rotation || defaultRotation,
-                                obj.keyframes[lastFrameIndex].scale || defaultScale)
-                    } else if (t <= startTime) {
-                        var firstFrameIndex = 0;
-                        var firstFrameTime = 0;
-                        obj.keyframes.map((frame, i) => {
-                            if (frame.time < lastFrameTime) {
-                                firstFrameTime = frame.time;
-                                firstFrameIndex = i;
-                            }
-                        })
-                        if (obj.keyframes[firstFrameIndex]) setProperties(
-                            obj.keyframes[firstFrameIndex].offset || defaultOffset,
-                            obj.keyframes[firstFrameIndex].rotation || defaultRotation,
-                            obj.keyframes[firstFrameIndex].scale || defaultScale)
-                    } else {
-                        // console.log("between frames");
-                        // is between frames
-                        // need to get two bounding frames
-                        var preframeIndex = 0;
-                        var preframeTime = 0;
-                        var postframeIndex = obj.keyframes.length - 1;
-                        var postframeTime = endTime;
-
-                        obj.keyframes.map((frame, i) => {
-                            if (t >= frame.time && preframeTime < frame.time) {
-                                preframeIndex = i; preframeTime = frame.time;
-                            }
-                            if (t < frame.time && frame.time < postframeTime) {
-                                postframeIndex = i; postframeTime = frame.time;
-                            }
-                        })
-
-                        // get % progress
-                        // if ((postframeTime - preframeTime) < 10e-8) {
-                        //     // console.log("singularity")
-                        // }
-                        const x = (t - preframeTime) / (postframeTime - preframeTime);
-
-                        let ts = 1;
-                        switch(obj.easing) {
-                            case INTERPOLATIONS.SIN: ts = Math.sin(Math.PI * x - Math.PI / 2) / 2 + 1 / 2; break;
-                            default: ts = x;
-                        }
-
-                        const preframe = obj.keyframes[preframeIndex];
-                        const postframe = obj.keyframes[postframeIndex];
-
-                        if (!preframe.offset) preframe.offset = defaultOffset;
-                        if (!postframe.offset) postframe.offset = defaultOffset;
-                        if (!preframe.rotation) preframe.rotation = defaultRotation;
-                        if (!postframe.rotation) postframe.rotation = defaultRotation;
-                        if (!preframe.scale) preframe.scale = defaultScale;
-                        if (!postframe.scale) postframe.scale = defaultScale;
-
-                        const offset = {
-                            x: (postframe.offset.x - preframe.offset.x) * ts + preframe.offset.x,
-                            y: (postframe.offset.y - preframe.offset.y) * ts + preframe.offset.y,
-                            z: (postframe.offset.z - preframe.offset.z) * ts + preframe.offset.z
-                        }
-
-                        const rotation = {
-                            x: (postframe.rotation.x - preframe.rotation.x) * ts + preframe.rotation.x,
-                            y: (postframe.rotation.y - preframe.rotation.y) * ts + preframe.rotation.y,
-                            z: (postframe.rotation.z - preframe.rotation.z) * ts + preframe.rotation.z,
-                        }
-
-                        const scale = (postframe.scale - preframe.scale) * ts + preframe.scale;
-
-                        setProperties(offset, rotation, scale);
-                    }
-                }
-
-                // let indices = obj.keyframes.map(frame => frame.index);
-                // let startTime = Math.min(indices)
-                // let endTime = Math.max(indices)
-                
-
-                // if (t > startTime && t < endTime) {
-                    // is a valid frame and should animate
-                    // get sinusoidal time
-                    // const ts = Math.sin((t - startTime) / (endTime - startTime) * Math.Pi / 2);
-
-                    // get frames
-                    // const keyframe = obj.keyframes.filter(keyframe => keyframe.index)
-                    // child.position.x = obj.src.origin.x
-                // }
-                
-                // if before any animated frames, then clamp to first animated frame
-
-                // if after all frames, then clamp to last frame
-
-            }
-        });
     }
 
     bufferGeometryFromSTL(geometry) {

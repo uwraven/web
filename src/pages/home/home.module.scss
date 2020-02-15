@@ -24,11 +24,11 @@ canvas {
     height: calc(100vh - 64px);
     width: 100vw;
     z-index: 0;
-    background: radial-gradient(
-        50vw 20vh at 45vw 105%,
-        rgba(255, 255, 255, 0.5),
-        rgba(0, 0, 0, 0.0),
-    );
+    // background: radial-gradient(
+    //     50vw 20vh at 45vw 105%,
+    //     rgba(255, 255, 255, 0.5),
+    //     rgba(0, 0, 0, 0.0),
+    // );
     background-color: black;
 }
 
