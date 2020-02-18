@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import styles from './Home.module.scss';
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
+import {RGBELoader} from 'three/examples/jsm/loaders/RGBELoader';
+// import {RoughnessMipmapper} from 'three/examples/jsm/utils/RoughnessMipmapper'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 import Models, {INTERPOLATIONS, defaultOffset, defaultRotation, defaultScale } from './CadComponents';
 
@@ -47,37 +49,25 @@ class Home extends Component {
     }
 
     render() {
-        // const target = (this.state.innerWidth < 840) ? (this.state.innerWidth < 540) ? 0 : 150 : 300;
-
-        const target = (this.state.innerWidth < 540) ? 0 : window.innerWidth / 4;
-
-        const displacement = Math.max(Math.min(-this.state.y * target, 0), -target);
-
-        const containerStyle = {
-            transform: `translateX(${displacement}px)`
-        }
-
         if (this.controls) this.controls.enabled = this.state.enableOrbit;
 
         return (
             <div className={styles.home} ref={(ref) => {this.contentMount = ref}}>
                 <div className={styles.threeContainer}>
                     {this.state.progress < 1.0 && <h1>{this.state.progress}</h1>}
-                    <div style={containerStyle} className={styles.threeInnerContainer} ref={(ref) => {this.threeMount = ref} }></div>
-                </div>            
+                    <div className={styles.threeInnerContainer} ref={(ref) => {this.threeMount = ref} }></div>
+                </div>           
+                <div className={styles.bottom}>
+                    h2
+                </div> 
             </div>
         );
     }
 
     resizeListener() {
-        if (this.threeMount) {
-            this.camera.aspect = this.threeMount.clientWidth / this.threeMount.clientHeight;
-            this.renderer.setSize(this.threeMount.clientWidth, this.threeMount.clientHeight );
-            this.camera.updateProjectionMatrix();
-        }
-        this.setState({
-            innerWidth: window.innerWidth
-        })
+        this.camera.aspect = this.threeMount.clientWidth / this.threeMount.clientHeight;
+        this.renderer.setSize(this.threeMount.clientWidth, this.threeMount.clientHeight );
+        this.camera.updateProjectionMatrix();
     }
 
     wheelListener() {
@@ -95,24 +85,39 @@ class Home extends Component {
         this.loadingManager = new THREE.LoadingManager();
         this.scene = new THREE.Scene();
         this.scene.name = "scene";
-        this.camera = new THREE.PerspectiveCamera( 20, this.threeMount.clientWidth / this.threeMount.clientHeight, 0.1, 10000 );
+        this.camera = new THREE.PerspectiveCamera( 20, this.threeMount.clientWidth / this.threeMount.clientHeight, 0.1, 1000 );
         this.renderer = new THREE.WebGLRenderer({
-            alpha: true,
+            alpha: false,
             antialias: true
         });
         this.renderer.setSize( this.threeMount.clientWidth, this.threeMount.clientHeight);
         this.renderer.setPixelRatio(2.0);
+        this.renderer.gammaOutput = true;
+        this.renderer.gammaFactor = 2.2;
+        this.renderer.shadowMap.enabled = true;
         // this.renderer.setClearColor(0xffffff);
         this.threeMount.appendChild(this.renderer.domElement);
 
-        var light = new THREE.SpotLight(0xffffff, 0);
-        light.position.set(200, 250, 200);
+        this.scene.fog = new THREE.Fog(0x000000, 20, 150);
+
+        var light = new THREE.DirectionalLight(0xffeecc);
+        light.position.set(20, 200, 50);
         light.castShadow = true;
-        light.shadow.camera.far = 1000;
-        light.penumbra = 0.5;
-        light.lookAt(0, 0, 0);
+        light.shadow.camera.top = 180;
+        light.shadow.camera.bottom = -10;
+        light.shadow.camera.left = - 60;
+        light.shadow.camera.right = 60;        
+        light.lookAt(0, 5, 0);
         light.name = "spotlight";
+        // light.intensity = 20;
+        light.shadow.mapSize.set(1024, 1024);
         this.scene.add(light);
+
+        // this.scene.add(new THREE.CameraHelper(light.shadow.camera));
+
+        light = new THREE.HemisphereLight( 0xffffff, 0x151515 );
+        light.position.set( 0, 200, 0 );
+        this.scene.add( light );
 
         var ambientLight = new THREE.AmbientLight( 0xe4f0ff, 0);
         ambientLight.name = "scenelight";
@@ -134,9 +139,28 @@ class Home extends Component {
             // light.intensity = 1.0;
             this.loaded = true;
         }
+        this.loadingManager.onError = (url) => {
+            console.log(url);
+        }
+
+        let pmremGenerator = new THREE.PMREMGenerator(this.renderer);
+        this.renderer.outputEncoding = THREE.sRGBEncoding;
+        this.textureLoader = new RGBELoader(this.loadingManager);
+        this.textureLoader
+            .load(`textures/quarry_02_2k.hdr`, (texture, data) => {         
+                console.log(texture);   
+                let envMap = pmremGenerator.fromEquirectangular(texture);
+                this.scene.environment = envMap.texture;
+                // this.scene.background  = envMap.texture;
+                this.renderer.toneMappingExposure = 0.8;
+                texture.dispose();
+                pmremGenerator.dispose();
+        });
+
+
         // this.loadManager.onProgress(); 
         // Models.map(obj => {
-        this.loader.load(`cad/RAVENV10.glb`, (model) => {
+        this.loader.load(`cad/test_raven_v15.glb`, (model) => {
             // render object and center it
 
             // replace this material with properties from json
@@ -153,24 +177,61 @@ class Home extends Component {
             // var mesh = new THREE.Mesh(geometry, material);
             // mesh.position.set(obj.origin.x, obj.origin.y, obj.origin.z);
             // mesh.receiveShadow = true;
-            model.scene.children.map(child => child.receiveShadow = true);
-            this.mixer = new THREE.AnimationMixer(model.scene);
-            model.animations.map((clip) => this.mixer.clipAction(clip).play());
+            model.scene.traverse((node) => {
+                if (node.isMesh) {
+                    node.castShadow = true;
+                    node.receiveShadow = true;
+                }
+            });
+
+            // Add A floor
+            // let plane = new THREE.PlaneHelper(new THREE.Plane(new THREE.Vector3(0, 1, 0)), 1000, 0x000000)
+            // plane.receiveShadow = true; 
+            // this.scene.add(plane);
+
+            let mesh = new THREE.Mesh( 
+                new THREE.PlaneBufferGeometry( 500, 500 ), 
+                new THREE.MeshPhongMaterial( 
+                    { color: 0x010101, depthWrite: false } ) );
+            mesh.rotation.x = - Math.PI / 2;
+            mesh.receiveShadow = true;
+            this.scene.add( mesh );
+
+            let grid = new THREE.GridHelper( 500, 50, 0x444444, 0x444444 );
+            grid.material.opacity = 0.3;
+            grid.material.transparent = true;
+            this.scene.add( grid );
+
+            // [5, 10, 15].map((radius) => {
+            //     let color = 0.05 - Math.pow(radius, 2) / Math.pow(16, 2) / 24;
+            //     let circBuffer = new THREE.LineLoop(
+            //         new THREE.EdgesGeometry(new THREE.CircleGeometry(radius, 128)), 
+            //         new THREE.LineBasicMaterial({color: new THREE.Color(color, color, color) }));
+            //     circBuffer.rotateX(Math.PI / 2);
+            //     circBuffer.receiveShadow = true;
+            //     this.scene.add(circBuffer);
+            // })            
+            // this.mixer = new THREE.AnimationMixer(model.scene);
+            // model.animations.map((clip) => this.mixer.clipAction(clip).play());
+            
 
             // geometry.scene.scale.set(10);
             // mesh.name = obj.src;
             this.scene.add(model.scene);
+            this.scene.getObjectByName("RAVEN_v17").setRotationFromEuler(new THREE.Euler(0, -Math.PI / 4, 0));
         });
         // });
 
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-        // this.controls.enableZoom = false;
-        // this.controls.minPolarAngle = Math.PI / 2;
-        // this.controls.maxPolarAngle = Math.PI / 2;
+        this.controls.enableZoom = false;
         // this.controls.enablePan = false;
-        this.camera.position.z = 5;
-        this.camera.position.y = 1;
-        this.controls.target = new THREE.Vector3(0, 1, 0);
+        this.controls.minPolarAngle = Math.PI / 4;
+        this.controls.maxPolarAngle = Math.PI / 2;
+        this.camera.position.z = 45;
+        this.camera.position.x = -8
+        this.camera.position.y = 18;
+        this.camera.lookAt(0, 6.5, 0);
+        this.controls.target = new THREE.Vector3(0, 6.5, 0);
         // this.scene.translateX(-120);
         // this.camera.translateX(120);
         
@@ -181,8 +242,6 @@ class Home extends Component {
         var animate = function () {
           requestAnimationFrame( animate );
           scope.animateFrame(scope);
-          let dt = scope.clock.getDelta();
-          if (scope.mixer) scope.mixer.update(dt);
         };
 
         animate();
@@ -193,12 +252,12 @@ class Home extends Component {
         scope.renderer.render(scope.scene, scope.camera);
 
         // Animate lights in
-        if (scope.loaded) {
-            let spotlight = scope.scene.getObjectByName('spotlight');
-            let scenelight = scope.scene.getObjectByName('scenelight')
-            if (spotlight.intensity < 1.0) spotlight.intensity += 1 / 60;
-            if (scenelight.intensity < 0.3) scenelight.intensity += 0.2 / 60;
-        }
+        // if (scope.loaded) {
+            // let spotlight = scope.scene.getObjectByName('spotlight');
+            // let scenelight = scope.scene.getObjectByName('scenelight')
+            // if (spotlight.intensity < 1) spotlight.intensity += 1 / 20;
+            // if (scenelight.intensity < 0) scenelight.intensity += 0.2 / 60;
+        // }  
 
     }
 

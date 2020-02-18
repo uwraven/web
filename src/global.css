@@ -15,7 +15,8 @@ body {
 
 h1 {
     font-family: "Titillium Web", sans-serif;
-    font-style: italic;
+    /* font-style: italic; */
+    font-weight: bold;
     font-size: 28px;
     margin: 0;
     padding: 0;

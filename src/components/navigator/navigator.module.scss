@@ -1,15 +1,15 @@
 .navigationWrapper {
-    height: 64px;
+    height: 128px;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 0 32px;
-    border-bottom: 1px solid var(--border-gray);
+    padding: 0 64px;
+    // border-bottom: 1px solid var(--border-gray);
     position: fixed;
     left: 0;
     right: 0;
-    background-color: black;
+    // background-color: black;
     z-index: 100;
 }
 
@@ -104,15 +104,15 @@
     .collapsable {
         position: absolute;
         left: 0;
-        top: 64px;
-        transition: height 500ms;
+        top: 128px;
+        transition: height 500ms, background-color 500ms;
         display: flex;
         flex-direction: column;
         height: 0;
         font-size: 24px;
-        background: black;
+        background: none;
         width: 100vw;
-        border-top: 1px solid var(--border-gray);
+        // border-top: 1px solid var(--border-gray);
 
         ul {
             padding: 0 32px;
@@ -135,6 +135,7 @@
 
     .expanded {
         height: 100vh;
+        background-color: black;
     }
 
 }

@@ -16,7 +16,7 @@ class Navigator extends Component {
         return(
             <div className={styles.navigationWrapper}>
                 <div className={styles.navigationLeft}>
-                    <Link to={this.props.home} onClick={() => this.setState({expanded: false})}><h1>UW RAVEN</h1></Link>
+                    <Link to={this.props.home} onClick={() => this.setState({expanded: false})}><h1>ARCC</h1></Link>
                 </div>
                     <div className={styles.navigationRight}>
                     <ul className={styles.navigationList}> 
