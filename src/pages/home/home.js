@@ -36,15 +36,16 @@ class Home extends Component {
                             <h3>Raven</h3>
                             <p>Our development vehicle, Raven, is propelled by a throttled 35lbf nitrous oxide / ABS hybrid engine. Control is provided by a two axis engine gimbal and cold gas reaction control system</p>
                             <ul>
-                                <li>CO2 supercharged propellant delivery</li>
+                                <li>N2 supercharged propellant delivery</li>
                                 <li>Replaceable 3D printed ABS fuel grain</li>
                                 <li>Linear actuator driven 2D gimbal</li>
-                                <li>3DoF RCS thruster array</li>
+                                <li>3D N2 RCS thruster array</li>
                                 <li>Full wireless telemetry and remote operation</li>
                             </ul>
                         </div>
-                        <ThreeRenderer className={styles.renderer} />
                     </div>
+                    <ThreeRenderer className={styles.renderer} />
+
                 </div>
                 <div className={styles.involved}>
                     <h3  id={"contribute"}>Getting Involved</h3>

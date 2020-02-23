@@ -9,42 +9,31 @@ import url_thompson from '../../Assets/Portraits/thompson.jpg'
 import url_chen from '../../Assets/Portraits/chen.jpg';
 import url_bardakcilar from '../../Assets/Portraits/bardakcilar.jpg';
 import url_kim from '../../Assets/Portraits/kim.png';
-import url_grinchuck from '../../Assets/Portraits/grinchuck.jpg';
+import url_grinchuk from '../../Assets/Portraits/grinchuk.jpg';
+import Footer from '../../Components/Footer/Footer';
 
 class Team extends Component {
     render() {
         return (
-            <div className={styles.container}>
-                <h3>Members</h3>
-                <div className={styles.peopleContainer}>
-                    { Members.map(person => {
-                        return(
-                            <div className={styles.personContainer}>
-                                <div className={styles.imageContainer}>
-                                    <img src={person.source} alt={person.name} className={styles.personImage}/>
-                                    { person.link && <a className={styles.link} target={"_blank"} href={person.link}></a> }
+            <div className={styles.wrapper}>
+                <div className={styles.container}>
+                    <h3>Members</h3>
+                    <div className={styles.peopleContainer}>
+                        { Members.map(person => {
+                            return(
+                                <div className={styles.personContainer}>
+                                    <div className={styles.imageContainer}>
+                                        <img src={person.source} alt={person.name} className={styles.personImage}/>
+                                        { person.link && <a className={styles.link} target={"_blank"} href={person.link}></a> }
+                                    </div>
+                                    <p className={styles.name}>{person.name}</p>
+                                    <p className={styles.role}>{person.role}</p>
                                 </div>
-                                <p className={styles.name}>{person.name}</p>
-                                <p className={styles.role}>{person.role}</p>
-                            </div>
-                        )
-                    }) }
+                            )
+                        }) }
+                    </div>
                 </div>
-                {/* <h3>Mentors</h3>
-                <div className={styles.peopleContainer}>
-                    { Members.map(person => {
-                        return(
-                            <div className={styles.personContainer}>
-                                <div className={styles.imageContainer}>
-                                    <img src={person.source} alt={person.name} className={styles.personImage}/>
-                                    <a></a>
-                                </div>
-                                <p className={styles.name}>{person.name}</p>
-                                <p className={styles.role}>{person.role}</p>
-                            </div>
-                        )
-                    }) }
-                </div> */}
+                <Footer/>
             </div>
         );
     }
@@ -79,7 +68,7 @@ const Members = [
         name: "Jiacheng Chen",
         role: "Structures Lead",
         source: url_chen,
-        link: "https://www.linkedin.com/in/nathaniel-barry-42580a147/"
+        // link: "https://www.linkedin.com/in/nathaniel-barry-42580a147/"
     },
     {
         name: "Nate Barry",
@@ -88,9 +77,9 @@ const Members = [
         link: "https://www.linkedin.com/in/nathaniel-barry-42580a147/"
     },
     {
-        name: "Roman Grinchuck",
+        name: "Roman Grinchuk",
         role: "Actuators, Avionics and GNC",
-        source: url_grinchuck,
+        source: url_grinchuk,
         // link: "https://www.linkedin.com/in/nathaniel-barry-42580a147/"
     },
     {

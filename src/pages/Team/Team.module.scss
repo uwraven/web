@@ -1,5 +1,11 @@
+.wrapper {
+    width: 100vw;
+}
+
 .container {
-    padding: 10vh 22vw;
+    padding: 10vh 0;
+    width: var(--width-l);
+    margin: 0 auto;
 }
 
 .peopleContainer {
@@ -69,3 +75,22 @@
     }
 
 }
+
+@media screen and (max-width:  1024px) {
+    .container {
+        width: var(--width-m);
+    }
+}
+
+@media screen and (max-width:  812px) {
+    .personContainer {
+        flex-basis: 45%;
+    }
+}
+
+@media screen and (max-width:  360px) {
+    .personContainer {
+        flex-basis: 100%;
+    }
+}
+

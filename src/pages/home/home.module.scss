@@ -11,7 +11,13 @@ canvas {
     overflow-x: hidden;
 
     .mission {
-        padding: 20vh 40vw 8vh 22vw;
+        margin: 20vh auto;
+        padding: 0 2vw;
+        width: var(--width-l);
+
+        p {
+            max-width: 75%;
+        }
 
         .row {
             display: flex;
@@ -27,14 +33,17 @@ canvas {
     }
 
     .vehicle {        
+        overflow: hidden;
+
         .vehicleContentContainer {
             position: relative;
+            width: var(--width-l);
+            margin: auto;
 
             .vehicleContent {
                 position: absolute;
-                margin-left: 50%;
-                margin-right: 22vw;
-                margin-top: 100px;
+                width: 50%;
+                margin: 100px 0 0 50%;
             }
         }
 
@@ -44,7 +53,9 @@ canvas {
     }
 
     .involved {
-        padding: 5vh 22vw 0 22vw;
+        width: var(--width-l);
+        padding: 5vh 0;
+        margin: auto;
 
         .tiles {
             border-top: 1px solid var(--border-gray);
@@ -77,7 +88,9 @@ canvas {
     }
 
     .fundraising {
-        padding: 8vh 22vw 15vh 22vw;
+        width: var(--width-l);
+        margin: auto;
+        padding: 8vh 0 15vh 0;
         // padding-bottom: 10vh;
 
         h3 {
@@ -89,4 +102,72 @@ canvas {
 
 .bottom {
     height: 100vh;
+}
+
+@media screen and (max-width: 1024px) {
+    .home {
+        .mission {
+            width: var(--width-m);
+        }
+
+        .vehicle {
+            .vehicleContentContainer {
+                width: var(--width-m);
+            }
+        }
+
+        .involved {
+            width: var(--width-m);
+        }
+
+        .fundraising {
+            width: var(--width-m);
+        }
+    }
+}
+
+@media screen and (max-width: 812px) {
+    .home {
+        .mission {
+            width: var(--width-m);
+            margin-bottom: 75px;
+        }
+
+        .vehicle {
+            .vehicleContentContainer {
+                position: static;
+                flex-direction: row-reverse;
+
+                .vehicleContent {
+                    position: static;
+                    margin: 0;
+                    width: 100%;
+                }
+            }
+        }
+
+        .involved {
+            .tiles {
+                flex-direction: column;
+                min-height: 0;
+                // align-items: flex-start;
+                // justify-content: stretch;
+
+                .tile {
+                    min-height: 0;
+                    margin-top: 32px;
+                    margin-bottom: 0;
+
+                    button {
+                        margin-top: 16px;
+                    }
+                }
+
+                .tile:not(:last-child) {
+                    margin-right: 0;
+                }
+            }
+            
+        }
+    }
 }

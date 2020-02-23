@@ -60,6 +60,11 @@ class ThreeRenderer extends Component {
         const w = this.threeMount.clientWidth;
         const h = this.threeMount.clientHeight * 0.9;
         this.camera.aspect = w / h;
+        if (window.innerWidth > 812) {
+            this.camera.setViewOffset(w, h, w * 1 / 6, 0, w, h);
+        } else {
+            this.camera.setViewOffset(w, h, 0, 0, w, h);
+        }
         this.renderer.setSize(w, h);
         this.camera.updateProjectionMatrix();
     }
@@ -73,7 +78,10 @@ class ThreeRenderer extends Component {
         const w = this.threeMount.clientWidth;
         const h = this.threeMount.clientHeight * 0.9;
         this.camera = new THREE.PerspectiveCamera( 25, w / h, 0.1, 1000 )
-        this.camera.setViewOffset(w, h, w * 1 / 6, 0, w, h);
+
+        if (window.innerWidth > 812) {
+            this.camera.setViewOffset(w, h, w * 1 / 6, 0, w, h);
+        }
         this.renderer = new THREE.WebGLRenderer({
             alpha: false,
             antialias: true
@@ -89,9 +97,14 @@ class ThreeRenderer extends Component {
 
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableZoom = false;
-        // this.controls.enablePan = false;
+        this.controls.enablePan = false;
+        if (window.innerWidth < 812) {
+            this.controls.enabled = false;
+        }
         this.controls.minPolarAngle = Math.PI / 4;
         this.controls.maxPolarAngle = Math.PI / 2;
+        
+
         this.camera.position.z = -34;
         this.camera.position.x = -4;
         this.camera.position.y = 7;

@@ -3,5 +3,7 @@
     --purple-hover: rgb(105, 63, 189);
     --border-gray: #333;
 
-    
+    --width-l: 56vw;
+    --width-q: 32vw;
+    --width-m: 76vw;
 }

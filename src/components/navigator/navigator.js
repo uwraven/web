@@ -15,24 +15,26 @@ class Navigator extends Component {
         const Links = () => Object.keys(this.props.refs).map(key => <li><Link to={this.props.refs[key].ref} onClick={() => {this.setState({expanded: false})}}>{this.props.refs[key].title}</Link></li>);
         return(
             <div className={styles.navigationWrapper}>
-                <div className={styles.navigationLeft}>
-                    <Link to={this.props.home} onClick={() => this.setState({expanded: false})}><h2>ARCC</h2></Link>
-                </div>
-                    <div className={styles.navigationRight}>
-                    <ul className={styles.navigationList}> 
-                        <Links/>
-                    </ul>
-                    <a href={"mailto:arcc@uw.edu"}><button>Contribute</button></a>
-                    <div className={[styles.mobileButton, (this.state.expanded) ? styles.mobileButtonExpanded : ""].join(" ")} onClick={(e) => {
-                        this.setState({expanded: !this.state.expanded})
-                    }}>
-                        <div/><div/>
+                <div className={styles.navigationInner}>
+                    <div className={styles.navigationLeft}>
+                        <Link to={this.props.home} onClick={() => this.setState({expanded: false})}><h2>ARCC</h2></Link>
                     </div>
-                </div>
-                <div className={[styles.collapsable, (this.state.expanded ? styles.expanded : "")].join(" ")}>
-                    <ul className={styles.collapsableNavList}> 
-                        <Links/>
-                    </ul>
+                        <div className={styles.navigationRight}>
+                        <ul className={styles.navigationList}> 
+                            <Links/>
+                        </ul>
+                        <a href={"mailto:arcc@uw.edu"}><button>Contribute</button></a>
+                        <div className={[styles.mobileButton, (this.state.expanded) ? styles.mobileButtonExpanded : ""].join(" ")} onClick={(e) => {
+                            this.setState({expanded: !this.state.expanded})
+                        }}>
+                            <div/><div/>
+                        </div>
+                    </div>
+                    <div className={[styles.collapsable, (this.state.expanded ? styles.expanded : "")].join(" ")}>
+                        <ul className={styles.collapsableNavList}> 
+                            <Links/>
+                        </ul>
+                    </div>
                 </div>
             </div>
         )

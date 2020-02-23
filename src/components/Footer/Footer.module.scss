@@ -1,12 +1,41 @@
 .container {
     border-top: 1px solid var(--border-gray);
-    padding: 16px 22vw;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
+    padding: 16px 0;
+
+    .inner {
+        width: var(--width-l);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        margin: auto;
+    }
+
+    a {
+        min-width: 120px
+    }
 
     p {
         font-size: 12px;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    .container {
+        .inner {
+            width: var(--width-m);
+        }
+    }
+}
+
+@media screen and (max-width: 812px) {
+    .container {
+        .inner {
+            flex-direction: column;
+            margin-bottom: 36px;
+            p {
+                margin-bottom: 16px;
+            }
+        }
     }
 }

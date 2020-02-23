@@ -1,16 +1,24 @@
 .navigationWrapper {
-    // height: 76px;
+    height: 64px;
+    // width: var(--width-l);
+    margin: 0 auto;
     display: flex;
-    flex-direction: row;
     align-items: center;
-    justify-content: space-between;
-    padding: 0 22vw;
     // border-bottom: 1px solid var(--border-gray);
     position: fixed;
     left: 0;
     right: 0;
     background-color: black;
     z-index: 100;
+}
+
+.navigationInner {
+    width: var(--width-l);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin: auto;
 }
 
 .navigationLeft {
@@ -50,10 +58,17 @@
     overflow: hidden;
 }
 
-@media screen and (max-width: 760px) {
+@media screen and (max-width: 1024px) {
+    .navigationInner {
+        width: var(--width-m);
+    }
+}
+
+@media screen and (max-width: 812px) {
 
     .navigationWrapper {
         padding: 0 16px;
+        height: 64px;
     }
 
     .navigationLeft {
@@ -107,7 +122,7 @@
     .collapsable {
         position: absolute;
         left: 0;
-        top: 128px;
+        top: 64px;
         transition: height 500ms, background-color 500ms;
         display: flex;
         flex-direction: column;
@@ -120,6 +135,8 @@
         ul {
             padding: 0 32px;
             margin: 0;
+            list-style-type: none;
+
             li {
                 // padding: 0 16px;
                 border-bottom: 1px solid var(--border-gray);
