@@ -9,7 +9,7 @@ import url_thompson from '../../Assets/Portraits/thompson.jpg'
 import url_chen from '../../Assets/Portraits/chen.jpg';
 import url_bardakcilar from '../../Assets/Portraits/bardakcilar.jpg';
 import url_kim from '../../Assets/Portraits/kim.png';
-
+import url_grinchuck from '../../Assets/Portraits/grinchuck.jpg';
 
 class Team extends Component {
     render() {
@@ -53,7 +53,7 @@ class Team extends Component {
 const Members = [
     {
         name: "Gabe Thompson",
-        role: "Team Administrator",
+        role: "Team Administrator, Actuators",
         source: url_thompson,
         link: "https://www.linkedin.com/in/gwthmpsn/"
     },
@@ -71,7 +71,7 @@ const Members = [
     },
     {
         name: "Erdem Bardakcilar",
-        role: "Actuators Lead",
+        role: "Actuators Lead, Avionics and GNC",
         source: url_bardakcilar,
         link: "https://www.linkedin.com/in/erdem-bardakcilar-57041b170/"
     },
@@ -88,7 +88,13 @@ const Members = [
         link: "https://www.linkedin.com/in/nathaniel-barry-42580a147/"
     },
     {
-        name: "Sean Kim",
+        name: "Roman Grinchuck",
+        role: "Actuators, Avionics and GNC",
+        source: url_grinchuck,
+        // link: "https://www.linkedin.com/in/nathaniel-barry-42580a147/"
+    },
+    {
+        name: "Shawn Kim",
         role: "Structures",
         source: url_kim,
         // link: "https://www.linkedin.com/in/nathaniel-barry-42580a147/"

@@ -22,7 +22,7 @@ class Navigator extends Component {
                     <ul className={styles.navigationList}> 
                         <Links/>
                     </ul>
-                    <button>Contribute</button>
+                    <a href={"mailto:arcc@uw.edu"}><button>Contribute</button></a>
                     <div className={[styles.mobileButton, (this.state.expanded) ? styles.mobileButtonExpanded : ""].join(" ")} onClick={(e) => {
                         this.setState({expanded: !this.state.expanded})
                     }}>

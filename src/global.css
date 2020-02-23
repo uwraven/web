@@ -55,14 +55,10 @@ span, p {
 
 a {
     font-size: 14px;
-    color: var(--purple);
     cursor: pointer;
+    color: white;
     transition: color 100ms;
     text-decoration: none;
-}
-
-a:hover {
-    color: var(--purple-hover);
 }
 
 ul {
@@ -105,7 +101,6 @@ button:hover {
     background-color: white;
     color: black;
 }
-
 
 .filledButton {
     background-color: white;

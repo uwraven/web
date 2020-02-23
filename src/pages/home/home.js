@@ -4,6 +4,8 @@ import styles from './Home.module.scss';
 import ThreeRenderer from '../../Components/ThreeRenderer/ThreeRenderer';
 import Timeline from '../../Components/Timeline/Timeline';
 import Footer from '../../Components/Footer/Footer';
+import { HashLink } from 'react-router-hash-link';
+import { Link } from 'react-router-dom';
 
 class Home extends Component {
 
@@ -22,8 +24,10 @@ class Home extends Component {
                     <h3>Our Mission</h3>
                     <p><strong>The Autonomous Rocket Control Club</strong> is an organization of students at the University of Washington developing a small scale, reusable rocket control testbed.</p>
                     <div className={styles.row}>
-                        <button className={"filledButton"}>Get Involved</button>
-                        <button>About ARCC</button>
+                        <HashLink to={"/#contribute"}><button className={"filledButton"}>Get Involved</button></HashLink>
+                        <Link to={"/team"}>
+                            <button>About ARCC</button>
+                        </Link> 
                     </div>
                 </div>
                 <div className={styles.vehicle}>
@@ -43,21 +47,31 @@ class Home extends Component {
                     </div>
                 </div>
                 <div className={styles.involved}>
-                    <h3>Getting Involved</h3>
+                    <h3  id={"contribute"}>Getting Involved</h3>
                     <div className={styles.tiles}>
-                        { Tiles.map(tile => <div className={styles.tile}>
-                                <div>
-                                    <h2>{tile.title}</h2>
-                                    <p>{tile.content}</p>
-                                </div>
-                                {
-                                    !tile.filled ? 
-                                    <button>{tile.cta}</button>
-                                    :
-                                    <button className={"filledButton"}>{tile.cta}</button>
-                                }
+                        <div className={styles.tile}>
+                            <div>
+                                <h2>Students</h2>
+                                <p>Interested in joining ARCC? We're looking for new members! Students with any level of experience are welcome.</p>
                             </div>
-                        )}
+                            <a href={"https://docs.google.com/forms/d/1CAJrfCIOnYouGxX1Qv9lJ-g5DIDP-UwXnsp20-gmyIc/edit"}><button>Join ARCC</button></a>
+                        </div>
+
+                        <div className={styles.tile}>
+                            <div>
+                                <h2>Industry</h2>
+                                <p>We are currently looking to develop industry partnerships, including mentorship, in-kind contributions, and sponsorship.</p>
+                            </div>
+                            <a href={"mailto:arcc@uw.edu"}><button>Contact Us</button></a>
+                        </div>
+
+                        <div className={styles.tile}>
+                            <div>
+                                <h2>Donating</h2>
+                                <p>ARCC is pending 501(c)(3) status, please contact us directly to make a contribution.</p>
+                            </div>
+                            <a href={"mailto:arcc@uw.edu"}><button className={"filledButton"}>Contribute</button></a>
+                        </div>
                     </div>
                 </div>
                 <div className={styles.fundraising}>
@@ -72,27 +86,9 @@ class Home extends Component {
     }
 }
 
-const Tiles = [
-    {
-        title: "Students",
-        content: "Interested in joining ARCC? We're looking for new members! Students with any level of experience are welcome.",
-        cta: "Join ARCC"
-    },
-    {
-        title: "Industry",
-        content: "We are currently looking to develop industry partnerships, including mentorship, in-kind contributions, and sponsorship.",
-        cta: "Contact Us"
-    },
-    {
-        title: "Donating",
-        content: "ARCC is a 501(c)(3) and can accept most forms of donations. See below for our more information about our fundraising goals.",
-        cta: "Contribute",
-        filled: true
-    }
-]
 
 const fundraisingMap = {
-    waypoints: [{progress: 0, title: " "}, {progress: 0.50}, {progress: 1.0, title: "Funded"}],
+    waypoints: [{progress: 0, title: " "}, {progress: 0.50}, {progress: 1.0, title: "$3k"}],
     progress: 0.05,
 }
 
@@ -101,8 +97,8 @@ const progressMap = {
         {progress: 0, title: " "},
         {progress: 0.15, title: "PDR"}, 
         {progress: 0.25, title: "CDR"}, 
-        {progress: 0.50, title: "Manufacturing"},
-        {progress: 0.75, title: "Flight Testing"},
+        {progress: 0.35, title: "Manufacturing and Testing"},
+        {progress: 0.75, title: "Flight Tests"},
         {progress: 1.0, title: "Completion"}
     ],
     progress: 0.2,

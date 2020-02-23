@@ -11,11 +11,13 @@
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-router-dom": "^5.1.2",
+    "react-router-hash-link": "^1.2.2",
     "react-scripts": "3.3.0",
     "three": "^0.113.2",
     "three-stl-loader": "^1.0.6"
   },
   "scripts": {
+    "deploy": "yarn build && cd build && aws s3 sync . s3://test.uwraven.com && cd ..",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
