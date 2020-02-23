@@ -16,13 +16,13 @@ class Navigator extends Component {
         return(
             <div className={styles.navigationWrapper}>
                 <div className={styles.navigationLeft}>
-                    <Link to={this.props.home} onClick={() => this.setState({expanded: false})}><h1>ARCC</h1></Link>
+                    <Link to={this.props.home} onClick={() => this.setState({expanded: false})}><h2>ARCC</h2></Link>
                 </div>
                     <div className={styles.navigationRight}>
                     <ul className={styles.navigationList}> 
                         <Links/>
                     </ul>
-                    <button className={styles.ctabutton}>Contribute</button>
+                    <button>Contribute</button>
                     <div className={[styles.mobileButton, (this.state.expanded) ? styles.mobileButtonExpanded : ""].join(" ")} onClick={(e) => {
                         this.setState({expanded: !this.state.expanded})
                     }}>

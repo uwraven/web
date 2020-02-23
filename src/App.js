@@ -7,21 +7,16 @@ import {
  } from 'react-router-dom'
 import Navigator from './Components/Navigator/Navigator';
 import {
-  Home
+  Home,
+  Team
 } from './Pages/Index'
 
 const subpages = {
-  vehicle: {
-    ref: '/team',
-    component: <div>Primary Vehicle</div>,
-    title: 'Team'
-  },
   contact: {
-    ref: '/contact',
-    component: <div>Contact us</div>,
-    title: 'Contact'
+    ref: '/team',
+    component: Team,
+    title: 'Our Team'
   }
-
 }
 
 function App() {
@@ -32,12 +27,7 @@ function App() {
         <Route exact path='/'>
           { <Home></Home> } 
         </Route>
-        {
-          Object.keys(subpages).map(key =>
-            <Route exact path={subpages[key].ref}>
-              { subpages[key].component }
-            </Route>)
-        }
+        <Route path='/team'><Team/></Route>
         <Redirect to={{pathname: '/'}}/>
       </Switch>
     </Router>

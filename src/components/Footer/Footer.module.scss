@@ -1,0 +1,12 @@
+.container {
+    border-top: 1px solid var(--border-gray);
+    padding: 16px 22vw;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    p {
+        font-size: 12px;
+    }
+}

@@ -1,0 +1,71 @@
+.container {
+    padding: 10vh 22vw;
+}
+
+.peopleContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    // background-color: darkgray;
+}
+
+.personContainer {
+    flex-basis: 30%;
+    // background-color: red;
+    margin-bottom: 32px;
+
+    .imageContainer {
+        position: relative;
+        // display: flex;
+        // flex-direction: row;
+
+        img {
+            width: 100%;
+            max-width: 300px;
+            max-height: 250px;
+            overflow: hidden;
+            // min-height: 200px;
+            // padding: 50% 0;
+            object-fit: cover;
+            background-color: var(--border-gray);
+            transition: transform 200ms;
+        }
+
+        .link {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            display: none;
+
+            a {
+                color: white;
+            }
+        }
+    }
+
+    .imageContainer:hover {
+        img {
+            transform: scale(1.02);
+        }
+
+        .link {
+            display: block;
+        }
+    }
+
+    .name {
+        display: block;
+        font-size: 15px;
+        padding: 12px 0 4px 0;
+    }
+
+    .role {
+        display: block;
+        font-weight: 200;
+    }
+
+}

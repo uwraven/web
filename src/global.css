@@ -10,38 +10,47 @@ html, body {
 }
 
 body {
-    font-family: "Open Sans";
+    font-family: "IBM Plex Sans", serif;
+    color: white;
 }
 
 h1 {
-    font-family: "Titillium Web", sans-serif;
+    font-family: "IBM Plex Sans", serif;
     /* font-style: italic; */
-    font-weight: bold;
+    font-weight: 600;
     font-size: 28px;
     margin: 0;
     padding: 0;
 }
 
 h2 {
-    font-family: "Titillium Web", sans-serif;
-    font-size: 24px;
+    font-family: "IBM Plex Sans", serif;
+    font-size: 16px;
     margin: 0;
     padding: 0;
+    padding-bottom: 8px;
 }
 
 h3 {
+    font-family: "IBM Plex Sans", serif;
+    font-size: 20px;
+    color: rgb(150, 150, 150);
     margin: 0;
     padding: 0;
+    padding-bottom: 12px;
+    font-weight: 200;
 }
 
 p {
     margin: 0;
     padding: 0;
+    line-height: 22px;
+    font-family: "IBM Plex Sans", serif;
 }
 
 span, p {
-    font-family: "Open Sans", sans-serif;
-    font-size: 14px;
+    font-family: "IBM Plex Sans", serif;
+    font-size: 15px;
 }
 
 a {
@@ -56,9 +65,54 @@ a:hover {
     color: var(--purple-hover);
 }
 
+ul {
+    /* padding: 0; */
+    padding: 16px;
+    margin: 0;
+}
+
+li {
+    font-family: "IBM Plex Sans", serif;
+    font-size: 14px;
+    /* line-height: 24px; */
+    padding: 6px 0;
+    margin: 0;
+}
+
 #root {
     /* width: 100vw; */
     height: 100vh;
     background: black;
     overflow: auto;
+}
+
+button {
+    height: 32px;
+    outline: none;
+    border: 1px solid white;
+    background-color: black;
+    color: white;
+    cursor: pointer;
+    min-width: 64px;
+    padding: 0 16px;
+    border-radius: 18px;
+    font-size: 15px;
+    transition: background-color 100ms, color 100ms;
+    font-family: "IBM Plex Sans", serif;
+}
+
+button:hover {
+    background-color: white;
+    color: black;
+}
+
+
+.filledButton {
+    background-color: white;
+    color: black;
+}
+
+.filledButton:hover {
+    /* background-color: black;
+    color: white; */
 }
