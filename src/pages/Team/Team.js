@@ -10,6 +10,9 @@ import url_chen from '../../Assets/Portraits/chen.jpg';
 import url_bardakcilar from '../../Assets/Portraits/bardakcilar.jpg';
 import url_kim from '../../Assets/Portraits/kim.png';
 import url_grinchuk from '../../Assets/Portraits/grinchuk.jpg';
+import url_wang from '../../Assets/Portraits/wang.jpg';
+import url_bridgman from '../../Assets/Portraits/bridgman.jpg';
+
 import Footer from '../../Components/Footer/Footer';
 
 class Team extends Component {
@@ -80,6 +83,17 @@ const Members = [
         name: "Roman Grinchuk",
         role: "Actuators, Avionics and GNC",
         source: url_grinchuk,
+        // link: "https://www.linkedin.com/in/nathaniel-barry-42580a147/"
+    },
+    {
+        name: "Yi Wang",
+        role: "Propulsion, Structures",
+        source: url_wang
+    },
+    {
+        name: "Karina Bridgman",
+        role: "Avionics and GNC",
+        source: url_bridgman,
         // link: "https://www.linkedin.com/in/nathaniel-barry-42580a147/"
     },
     {

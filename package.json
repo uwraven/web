@@ -17,7 +17,7 @@
     "three-stl-loader": "^1.0.6"
   },
   "scripts": {
-    "deploy": "yarn build && cd build && aws s3 sync . s3://test.uwraven.com && cd ..",
+    "deploy": "yarn build && cd build && aws s3 sync . s3://arcc.space && cd ..",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
