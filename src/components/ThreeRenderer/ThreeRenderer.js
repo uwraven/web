@@ -3,7 +3,12 @@ import PropTypes from 'prop-types';
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
 import {RGBELoader} from 'three/examples/jsm/loaders/RGBELoader';
+import {DRACOLoader} from 'three/examples/jsm/loaders/DRACOLoader';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
+import {EffectComposer} from 'three/examples/jsm/postprocessing/EffectComposer';
+import {RenderPass} from 'three/examples/jsm/postprocessing/RenderPass';
+import {UnrealBloomPass} from 'three/examples/jsm/postprocessing/UnrealBloomPass';
+
 import styles from './ThreeRenderer.module.scss';
 // import Models, {INTERPOLATIONS, defaultOffset, defaultRotation, defaultScale } from './CadComponents';
 
@@ -91,7 +96,15 @@ class ThreeRenderer extends Component {
         this.renderer.setPixelRatio(1.0);
         this.renderer.gammaOutput = true;
         this.renderer.gammaFactor = 2.2;
+        // this.renderer.toneMappingExposure = 0.0;
         this.renderer.shadowMap.enabled = true;
+
+        // let bloomRenderPass = new UnrealBloomPass( new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+        // let sceneRenderPass = new RenderPass(this.scene, this.camera);
+        // this.composer = new EffectComposer(this.renderer);
+        // this.composer.addPass(sceneRenderPass);
+        // this.composer.addPass(bloomRenderPass);
+
         // this.renderer.setClearColor(0xffffff);
         this.threeMount.appendChild(this.renderer.domElement);
 
@@ -105,11 +118,11 @@ class ThreeRenderer extends Component {
         this.controls.maxPolarAngle = Math.PI / 2;
         
 
-        this.camera.position.z = -34;
-        this.camera.position.x = -4;
-        this.camera.position.y = 7;
+        this.camera.position.z = -38;
+        this.camera.position.x = -5;
+        this.camera.position.y = 20;
         this.camera.lookAt(0, 6.5, 0);
-        this.controls.target = new THREE.Vector3(0, 6.5, 0);
+        this.controls.target = new THREE.Vector3(0, 7.5, 0);
         this.controls.autoRotate = true;
         this.controls.autoRotateSpeed = 0.8;
 
@@ -124,7 +137,7 @@ class ThreeRenderer extends Component {
         light.shadow.camera.right = 60;        
         light.lookAt(0, 5, 0);
         light.name = "spotlight";
-        // light.intensity = 20;
+        light.intensity = 1;
         light.shadow.mapSize.set(512, 512);
         this.scene.add(light);
 
@@ -136,6 +149,7 @@ class ThreeRenderer extends Component {
 
         var ambientLight = new THREE.AmbientLight( 0xe4f0ff, 0);
         ambientLight.name = "scenelight";
+        ambientLight.intensity = 1;
         this.scene.add( ambientLight );
 
         // create geometry from stl files
@@ -176,7 +190,7 @@ class ThreeRenderer extends Component {
                 pmremGenerator.dispose();
         });
 
-        this.loader.load(`cad/test_raven_v15.glb`, (model) => {
+        this.loader.load(`cad/raven_v12.glb`, (model) => {
             model.scene.traverse((node) => {
                 if (node.isMesh) {
                     node.castShadow = true;
@@ -196,17 +210,47 @@ class ThreeRenderer extends Component {
             grid.material.opacity = 0.3;
             grid.material.transparent = true;
             this.scene.add( grid );
-
+            
             this.scene.add(model.scene);
-            this.scene.getObjectByName("RAVEN_v17").setRotationFromEuler(new THREE.Euler(0, -Math.PI / 4, 0));
+            // this.scene.getObjectByName("RAVEN_v27").setRotationFromEuler(new THREE.Euler(0, -Math.PI / 4, 0))
+
+
+            // let red_light = this.scene.getObjectByName("light_red");
+            // if (red_light) {
+            //     console.log(red_light);
+            //     let point_light = new THREE.PointLight("#ff0000");
+            //     point_light.intensity = 1.0;
+            //     point_light.castShadow = true;
+            //     red_light.add(point_light);
+            // }
+
+            let green_light = this.scene.getObjectByName("light_green");
+            if (green_light) {
+                console.log(green_light);
+                let point_light = new THREE.PointLight("#00ff00");
+                point_light.intensity = 0.2;
+                point_light.castShadow = true;
+                green_light.add(point_light);
+            }
+
+            let white_light = this.scene.getObjectByName("light_white");
+            if (white_light) {
+                console.log(white_light);
+                let point_light = new THREE.PointLight("0000ff");
+                point_light.intensity = 0.2;
+                point_light.castShadow = true;
+                white_light.add(point_light);
+            }
+
         });
         // });
 
         const scope = this;
         var animate = function () {
-          requestAnimationFrame( animate );
-          scope.controls.update();
-          scope.animateFrame(scope);
+            requestAnimationFrame( animate );
+            scope.controls.update();
+            // scope.composer.render();
+            scope.animateFrame(scope);
         };
 
         animate();
@@ -219,10 +263,10 @@ class ThreeRenderer extends Component {
             let spotlight = this.scene.getObjectByName("spotlight");
             let scenelight = this.scene.getObjectByName("scenelight");
             if (spotlight) { if (spotlight.intensity < 1.0) {
-                spotlight.intensity += 0.01;
+                spotlight.intensity += 0.04;
             }}
             if (scenelight) { if (scenelight.intensity < 1.0) {
-                scenelight.intensity += 0.01;
+                scenelight.intensity += 0.04;
             }}
         }
     }

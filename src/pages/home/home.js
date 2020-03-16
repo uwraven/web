@@ -44,7 +44,7 @@ class Home extends Component {
                             </ul>
                         </div>
                     </div>
-                    <ThreeRenderer className={styles.renderer} />
+                    <ThreeRenderer className={styles.renderer} onLoad={() => {}} />
 
                 </div>
                 <div className={styles.involved}>
