@@ -13,7 +13,7 @@
     "react-router-dom": "^5.1.2",
     "react-router-hash-link": "^1.2.2",
     "react-scripts": "3.3.0",
-    "three": "^0.113.2",
+    "three": "^0.125.0",
     "three-stl-loader": "^1.0.6"
   },
   "scripts": {
